@@ -19,7 +19,7 @@ const HWND = win.getNativeWindowHandle()["readInt32LE"]();
 The effect is a number, you can has an object to help you:
 ```js
 const TRANSPARENT = {
-    DWMSBT_AUTO: 0,
+	DWMSBT_AUTO: 0,
 	DWMSBT_NONE: 1,
 	DWMSBT_MAINWINDOW: 2,		// mica
 	DWMSBT_TRANSIENTWINDOW: 3, // acrylic
