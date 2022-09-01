@@ -1,6 +1,6 @@
 <h1>Mica Electron</h1>
 
-<img src="exemple/img.png">
+<img src="exemple/files/img.png">
 
 <b>Mica Electron</b> is a tool to add mica effect on electron app.<br>
 This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.
@@ -22,7 +22,7 @@ const TRANSPARENT = {
 	DWMSBT_AUTO: 0,
 	DWMSBT_NONE: 1,
 	DWMSBT_MAINWINDOW: 2,		// mica
-	DWMSBT_TRANSIENTWINDOW: 3, // acrylic
+	DWMSBT_TRANSIENTWINDOW: 3,	// acrylic
 	DWMSBT_TABBEDWINDOW: 4		// mica tabbed
 }
 ```
@@ -33,3 +33,8 @@ const execFile = require("child_process").execFileSync;
 
 execFile('dwm_exec.exe', [HWND, TRANSPARENT.DWMSBT_MAINWINDOW]);
 ```
+
+<h2>Update 1.0.2</h2>
+
+- Enable auto dark mod
+- Detect if operating system is windows 11
