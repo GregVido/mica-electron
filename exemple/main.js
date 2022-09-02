@@ -11,6 +11,13 @@ const TRANSPARENT = {
     DWMSBT_TABBEDWINDOW: 4		// Mica tabbed
 }
 
+// Object of different theme
+const THEME = {
+    AUTO: 'auto',
+    DARK: 'dark',
+    WHITE: 'white',
+}
+
 // Enable transparent
 app.commandLine.appendSwitch("enable-transparent-visuals");
 
@@ -27,7 +34,7 @@ app.on('ready', () => {
     // Get the HWND
     const HWND = win.getNativeWindowHandle()["readInt32LE"]();
     // Execute dwm_exec.exe to apply effect
-    execFile(path.join(__dirname, '..', 'dwm_exec.exe'), [HWND, TRANSPARENT.DWMSBT_MAINWINDOW]);
+    execFile(path.join(__dirname, '..', 'dwm_exec.exe'), [HWND, TRANSPARENT.DWMSBT_MAINWINDOW, THEME.AUTO]);
 
     // Load an exemple file
     win.loadFile(path.join(__dirname, 'files', 'index.html'));
