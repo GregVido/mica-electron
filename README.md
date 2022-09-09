@@ -44,6 +44,11 @@ const execFile = require("child_process").execFileSync;
 execFile('dwm_exec.exe', [HWND, TRANSPARENT.DWMSBT_MAINWINDOW, THEME.AUTO]);
 ```
 
+<h2>Update 1.0.4</h2>
+
+- Fix dll missing
+- Fix windows 11 old version
+
 <h2>Update 1.0.3</h2>
 
 - Add theme in arguments
