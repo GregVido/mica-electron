@@ -26,9 +26,9 @@ app.on('ready', () => {
     const win = new BrowserWindow({
         width: 600,
         height: 180,
-        transparent: true, // Enable transparent
         show: false,
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        backgroundColor: '#00000000' // Transparent background
     });
 
     // Get the HWND

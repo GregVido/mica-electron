@@ -6,7 +6,7 @@
 This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.
 
 <h2>How use ?</h2>
-To use <b>Mica Electron</b>, you must execute the file <a href="dwm_exec.exe">dwm_exec.exe</a> with two arguments :<br>
+To use <b>Mica Electron</b>, you must execute the file <a href="dwm_exec.exe">dwm_exec.exe</a> with threes arguments :<br>
 
 - HWND : the window to apply effect
 - EFFECT : the type of transparency
@@ -43,6 +43,9 @@ const execFile = require("child_process").execFileSync;
 
 execFile('dwm_exec.exe', [HWND, TRANSPARENT.DWMSBT_MAINWINDOW, THEME.AUTO]);
 ```
+
+<h2>Update 1.0.5</h2>
+- Fix frameless (you can now resize the window)
 
 <h2>Update 1.0.4</h2>
 
