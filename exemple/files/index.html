@@ -5,11 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello World</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/scripts.js"></script>
 </head>
 <body>
     <main>
         <h1>Hello World</h1>
     </main>
+    <fieldset>
+        <legend>Effect</legend>
+        <button onclick="setEffect(3)">Acrylic</button>
+        <button onclick="setEffect(2)">Mica</button>
+        <button onclick="setEffect(4)">Mica Tabbed</button>
+    </fieldset>
+    <fieldset>
+        <legend>Theme</legend>
+        <button onclick="setTheme('auto')">Auto</button>
+        <button onclick="setTheme('dark')">Dark</button>
+        <button onclick="setTheme('light')">Light</button>
+    </fieldset>
 </body>
 </html>
