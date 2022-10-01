@@ -2,7 +2,7 @@
 
 <img src="exemple/files/img/img.png" name="exemple">
 <details>
-  <summary>Exemple d'effets</summary>
+  <summary>Exemple of effects</summary>
   <center>
 	<img src="exemple/files/img/demo-1.png" name="demo 0" width="30%">
 	<img src="exemple/files/img/demo-2.png" name="demo 1" width="30%">
@@ -28,21 +28,45 @@ const HWND = win.getNativeWindowHandle()["readInt32LE"]();
 
 The effect is a number, you can has an object to help you:
 ```js
-const TRANSPARENT = {
-	AUTO: 0,
-	NONE: 1,
-	ACRYLIC: 3,		// acrylic
-	MICA: 2,		// mica
-	MICA_TABBED: 4	// mica tabbed
+const EFFECT = {
+    BACKGROUND: {
+        AUTO: 0,
+        NONE: 1,
+        ACRYLIC: 3,         // Acrylic
+        MICA: 2,            // Mica
+        TABBED_MICA: 4      // Mica tabbed
+    },
+    CORNER: 5,
+    BORDER_COLOR: 6,
+    CAPTION_COLOR: 7,
+    TEXT_COLOR: 8
 }
 ```
 
-The theme is a string, you can has an object to help you:
+The params is a string, you can has an object to help you:
 ```js
-const THEME = {
-    AUTO: 'auto',	// select theme by the windows theme
-    DARK: 'dark',	// select the dark theme
-    LIGHT: 'light',	// select the white theme
+const PARAMS = {
+    THEME: {
+        AUTO: 'auto',	// select theme by the windows theme
+        DARK: 'dark',	// select the dark theme
+        LIGHT: 'light',	// select the white theme
+    },
+    CORNER: {
+        DEFAULT: 0,
+        DONOTROUND: 1,
+        ROUND: 2,
+        ROUNDSMALL: 3
+    },
+    COLOR: {
+        RED: 0x000000FF,
+        GREEN: 0x0000FF00,
+        BLUE: 0x00FF0000,
+        BLACK: 0x00000000,
+        WHITE: 0x00FFFFFF,
+        FROM_RGB: (r, g, b) => {
+            return r + (g << 8) + (b << 16);
+        }
+    }
 }
 ```
 
@@ -50,13 +74,37 @@ You can execute the file with this code :
 ```js
 const execFile = require("child_process").execFileSync;
 
-execFile('dwm_exec.exe', [HWND, TRANSPARENT.DWMSBT_MAINWINDOW, THEME.AUTO]);
+execFile('dwm_exec.exe', [HWND, EFFECT.BACKGROUND.MICA, PARAMS.THEME.AUTO]);
 ```
 
+You can change corner radius :
+```js
+executeDwm(HWND, EFFECT.CORNER, PARAMS.CORNER.ROUND);		// Rounded
+executeDwm(HWND, EFFECT.CORNER, PARAMS.CORNER.ROUNDSMALL);	// Small rounded
+executeDwm(HWND, EFFECT.CORNER, PARAMS.CORNER.DONOTROUND);	// Square
+```
+
+You can change window colors :
+```js
+executeDwm(HWND, EFFECT.BORDER_COLOR, PARAMS.COLOR.FROM_RGB(112, 4, 4));	// Border color
+executeDwm(HWND, EFFECT.CAPTION_COLOR, PARAMS.COLOR.FROM_RGB(112, 4, 4));	// Background titlebar color
+executeDwm(HWND, EFFECT.TEXT_COLOR, PARAMS.COLOR.WHITE);					// Title text color
+```
+
+<h2>Update 1.0.7</h2>
+
+- Add corner option to edit it.
+- Add window colors options to edit them:
+	- Change border color
+	- Change caption color
+	- Change title color
+
 <h2>Update 1.0.6</h2>
+
 - Fix exemple
 
 <h2>Update 1.0.5</h2>
+
 - Fix frameless (you can now resize the window)
 
 <h2>Update 1.0.4</h2>

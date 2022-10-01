@@ -24,5 +24,23 @@
         <button onclick="setTheme('dark')">Dark</button>
         <button onclick="setTheme('light')">Light</button>
     </fieldset>
+    <fieldset>
+        <legend>Corner</legend>
+        <button onclick="setParams(5, 2)">Round</button>
+        <button onclick="setParams(5, 3)">Small Round</button>
+        <button onclick="setParams(5, 1)">Square</button>
+    </fieldset>
+    <fieldset>
+        <legend>Window Color</legend>
+
+        <input type="color" id="colorBorder" name="colorBorder" value="#e6e6e6">
+        <label for="colorBorder">Border</label>
+
+        <input type="color" id="colorCaption" name="colorCaption" value="#e6e6e6">
+        <label for="colorCaption">Caption</label>
+
+        <input type="color" id="colorTitle" name="colorTitle" value="#e6e6e6">
+        <label for="colorTitle">Title</label>
+    </fieldset>
 </body>
 </html>
