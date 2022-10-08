@@ -91,6 +91,37 @@ executeDwm(HWND, EFFECT.CAPTION_COLOR, PARAMS.COLOR.FROM_RGB(112, 4, 4));	// Bac
 executeDwm(HWND, EFFECT.TEXT_COLOR, PARAMS.COLOR.WHITE);					// Title text color
 ```
 
+<h3>How to remove the frame ?</h3>
+
+You can use ffi to remove the frame with this code:
+
+```js
+const ffi = require('ffi-napi');
+
+const user32 = new ffi.Library('user32', {
+    'SetWindowPos': ['bool', ['long', 'long', 'int', 'int', 'int', 'int', 'uint']],
+    'SetWindowLongA': ['long', ['long', 'int', 'long']]
+});
+
+function removeFrame(window) {
+    const HWND = window.getNativeWindowHandle()["readInt32LE"]();
+
+    const bounds = window.getBounds();
+
+    user32.SetWindowLongA(HWND, -16, 0x00fff00); 
+    user32.SetWindowPos(HWND, 0, bounds.x, bounds.y, bounds.width, bounds.height, 0x0020); 
+}
+
+const win = new BrowserWindow({
+    width: 600,
+    height: 360,
+    backgroundColor: '#000000ff', // Transparent background
+    ...
+});
+
+removeFrame(win);
+```
+
 <h2>Update 1.0.7</h2>
 
 - Add corner option to edit it.
@@ -98,6 +129,11 @@ executeDwm(HWND, EFFECT.TEXT_COLOR, PARAMS.COLOR.WHITE);					// Title text color
 	- Change border color
 	- Change caption color
 	- Change title color
+
+<h2>Update 1.0.7</h2>
+
+- Add script to remove frame
+- Add typescript exemple
 
 <h2>Update 1.0.6</h2>
 

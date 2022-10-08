@@ -1,4 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+import { BrowserWindow } from "electron";
+
+const { app, ipcMain } = require('electron');
 const execFile = require("child_process").execFileSync;
 const path = require('path');
 
@@ -11,7 +13,20 @@ const user32 = new ffi.Library('user32', {
 });
 
 // Object of different effects
-const EFFECT = {
+
+const EFFECT: { 
+    BACKGROUND: { 
+        AUTO: number,
+        NONE: number, 
+        ACRYLIC: number, 
+        MICA: number, 
+        TABBED_MICA: number 
+    }, 
+    CORNER : number, 
+    BORDER_COLOR: number, 
+    CAPTION_COLOR: number, 
+    TEXT_COLOR: number 
+} = {
     BACKGROUND: {
         AUTO: 0,
         NONE: 1,
@@ -26,7 +41,27 @@ const EFFECT = {
 }
 
 // Object of different params
-const PARAMS = {
+const PARAMS : {
+    THEME: {
+        AUTO: string,
+        DARK: string,
+        LIGHT: string,
+    },
+    CORNER: {
+        DEFAULT: number,
+        DONOTROUND: number,
+        ROUND: number,
+        ROUNDSMALL: number
+    },
+    COLOR: {
+        RED: number,
+        GREEN: number,
+        BLUE: number,
+        BLACK: number,
+        WHITE: number,
+        FROM_RGB: (r: number, g: number, b: number) => number
+    }
+} = {
     THEME: {
         AUTO: 'auto',
         DARK: 'dark',
@@ -44,7 +79,7 @@ const PARAMS = {
         BLUE: 0x00FF0000,
         BLACK: 0x00000000,
         WHITE: 0x00FFFFFF,
-        FROM_RGB: (r, g, b) => {
+        FROM_RGB:  (r: number, g: number, b: number) => {
             return r + (g << 8) + (b << 16);
         }
     }
@@ -54,13 +89,13 @@ const PARAMS = {
 app.commandLine.appendSwitch("enable-transparent-visuals");
 
 // function to apply effect
-function executeDwm(hwnd, effect, theme) {
+function executeDwm(hwnd: number, effect: number, theme: string): void {
     // Execute dwm_exec.exe to apply effect
-    execFile(path.join(__dirname, '..', 'source', 'dwm_exec.exe'), [hwnd, effect, theme]);
+    execFile(path.join(__dirname, '..', 'dwm_exec.exe'), [hwnd, effect, theme]);
 }
 
 // functtion to remove the frame of window
-function removeFrame(window) {
+function removeFrame(window: BrowserWindow): void {
     const HWND = window.getNativeWindowHandle()["readInt32LE"]();
 
     const bounds = window.getBounds();
@@ -76,11 +111,12 @@ app.on('ready', () => {
         height: 360,
         show: false,
         autoHideMenuBar: true,
-        backgroundColor: '#000000ff', // Transparent background
+        backgroundColor: '#00000000', // Transparent background
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
-        }
+        },
+
     });
 
     // Get the HWND
@@ -110,19 +146,18 @@ app.on('ready', () => {
     });
 
     // Change theme
-    ipcMain.on('theme', (evt, newTheme) => {
+    ipcMain.on('theme', (evt: any, newTheme: string) => {
         theme = newTheme;
-        // executeDwm(HWND, effect, theme);
-        executeDwm(HWND, 9, theme);
+        executeDwm(HWND, effect, theme);
     });
 
     // Change effect
-    ipcMain.on('effect', (evt, newEffect) => {
+    ipcMain.on('effect', (evt: any, newEffect: number) => {
         effect = newEffect;
         executeDwm(HWND, effect, theme);
     });
 
-    ipcMain.on('params', (evt, params, value) => {
+    ipcMain.on('params', (evt: any, params: number, value: string) => {
         executeDwm(HWND, params, value);
     });
 
