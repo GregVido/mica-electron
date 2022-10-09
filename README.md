@@ -1,12 +1,12 @@
 <h1>Mica Electron</h1>
 
-<img src="exemple/files/img/img.png" name="exemple">
+<img src="files/img/img.png" name="exemple">
 <details>
   <summary>Exemple of effects</summary>
   <center>
-	<img src="exemple/files/img/demo-1.png" name="demo 0" width="30%">
-	<img src="exemple/files/img/demo-2.png" name="demo 1" width="30%">
-	<img src="exemple/files/img/demo-3.png" name="demo 2" width="30%"> 
+	<img src="files/img/demo-1.png" name="demo 0" width="30%">
+	<img src="files/img/demo-2.png" name="demo 1" width="30%">
+	<img src="files/img/demo-3.png" name="demo 2" width="30%"> 
   </center> 
 </details><br> 
 
@@ -14,7 +14,7 @@
 This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.
 If you want use npm, click <a href="https://www.npmjs.com/package/mica-electron">here</a>.
 
-<h2>How use ?</h2>
+<h2>Usage</h2>
 To use <b>Mica Electron</b>, you must execute the file <a href="dwm_exec.exe">dwm_exec.exe</a> with threes arguments :<br>
 
 - HWND : the window to apply effect
@@ -25,31 +25,38 @@ The HWND can be recover with this ligne :
 ```js
 const HWND = win.getNativeWindowHandle()["readInt32LE"]();
 ```
+<details>
+  <summary>PARAMS Object</summary>
+  The params is a number, you can has an object to help you:
 
-The effect is a number, you can has an object to help you:
 ```js
-const EFFECT = {
-    BACKGROUND: {
-        AUTO: 0,
-        NONE: 1,
-        ACRYLIC: 3,         // Acrylic
-        MICA: 2,            // Mica
-        TABBED_MICA: 4      // Mica tabbed
-    },
-    CORNER: 5,
-    BORDER_COLOR: 6,
-    CAPTION_COLOR: 7,
-    TEXT_COLOR: 8
-}
+    const PARAMS = {
+        BACKGROUND: {
+            AUTO: 0,
+            NONE: 1,
+            ACRYLIC: 3,         // Acrylic
+            MICA: 2,            // Mica
+            TABBED_MICA: 4      // Mica tabbed
+        },
+        CORNER: 5,
+        BORDER_COLOR: 6,
+        CAPTION_COLOR: 7,
+        TEXT_COLOR: 8,
+        FRAME: 9
+    }
 ```
+</details>
 
-The params is a string, you can has an object to help you:
+<details>
+  <summary>VALUE Object</summary>
+The value is a string, you can has an object to help you:
+
 ```js
-const PARAMS = {
+const VALUE = {
     THEME: {
-        AUTO: 'auto',	// select theme by the windows theme
-        DARK: 'dark',	// select the dark theme
-        LIGHT: 'light',	// select the white theme
+        AUTO: 0,	// select theme by the windows theme
+        DARK: 1,	// select the dark theme
+        LIGHT: 2,	// select the white theme
     },
     CORNER: {
         DEFAULT: 0,
@@ -66,96 +73,75 @@ const PARAMS = {
         FROM_RGB: (r, g, b) => {
             return r + (g << 8) + (b << 16);
         }
-    }
+    },
+    FALSE: 0,
+    TRUE: 1
 }
 ```
+</details><br>
 
-You can execute the file with this code :
+You can apply effect with this code :
 ```js
-const execFile = require("child_process").execFileSync;
+const { executeDwm, redraw } = require('./source/build/Release/micaElectron');
+// the redraw function is for removing the frame
 
-execFile('dwm_exec.exe', [HWND, EFFECT.BACKGROUND.MICA, PARAMS.THEME.AUTO]);
+executeDwm(HWND, params, value);
 ```
 
-You can change corner radius :
-```js
-executeDwm(HWND, EFFECT.CORNER, PARAMS.CORNER.ROUND);		// Rounded
-executeDwm(HWND, EFFECT.CORNER, PARAMS.CORNER.ROUNDSMALL);	// Small rounded
-executeDwm(HWND, EFFECT.CORNER, PARAMS.CORNER.DONOTROUND);	// Square
-```
+<details>
+  <summary>Change radius</summary>
+    You can change corner radius :
 
-You can change window colors :
 ```js
-executeDwm(HWND, EFFECT.BORDER_COLOR, PARAMS.COLOR.FROM_RGB(112, 4, 4));	// Border color
-executeDwm(HWND, EFFECT.CAPTION_COLOR, PARAMS.COLOR.FROM_RGB(112, 4, 4));	// Background titlebar color
-executeDwm(HWND, EFFECT.TEXT_COLOR, PARAMS.COLOR.WHITE);					// Title text color
+executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.ROUND);		// Rounded
+executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.ROUNDSMALL);	// Small rounded
+executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.DONOTROUND);	// Square
 ```
+<center>
+<img src="files/img/corner-1.png" name="corner 0" width="10%">
+<img src="files/img/corner-2.png" name="corner 1" width="10%">
+<img src="files/img/corner-3.png" name="corner 2" width="10%"> 
+</center>
+</details>
+
+<details>
+  <summary>Change window colors</summary>
+    You can change window colors :
+
+```js
+executeDwm(HWND, PARAMS.BORDER_COLOR, VALUE.COLOR.FROM_RGB(244, 11, 11));	// Border color
+executeDwm(HWND, PARAMS.CAPTION_COLOR, VALUE.COLOR.FROM_RGB(38, 38, 38));	// Background titlebar color
+executeDwm(HWND, PARAMS.TEXT_COLOR, VALUE.COLOR.WHITE);			// Title text color
+```
+<center>
+<img src="files/img/border.png" name="border" width="50%">
+</center>
+</details><br>
 
 <h3>How to remove the frame ?</h3>
 
-You can use ffi to remove the frame with this code:
+You can remove the frame with the redraw function with this code:
 
 ```js
-const ffi = require('ffi-napi');
-
-const user32 = new ffi.Library('user32', {
-    'SetWindowPos': ['bool', ['long', 'long', 'int', 'int', 'int', 'int', 'uint']],
-    'SetWindowLongA': ['long', ['long', 'int', 'long']]
-});
-
 function removeFrame(window) {
     const HWND = window.getNativeWindowHandle()["readInt32LE"]();
 
     const bounds = window.getBounds();
 
-    user32.SetWindowLongA(HWND, -16, 0x00fff00); 
-    user32.SetWindowPos(HWND, 0, bounds.x, bounds.y, bounds.width, bounds.height, 0x0020); 
+    executeDwm(HWND, PARAMS.FRAME, VALUE.FALSE);
+    redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height, 0x0020);
 }
 
 const win = new BrowserWindow({
     width: 600,
     height: 360,
     backgroundColor: '#000000ff', // Transparent background
+    frame: true, // important
     ...
 });
 
 removeFrame(win);
 ```
-
-<h2>Update 1.0.7</h2>
-
-- Add corner option to edit it.
-- Add window colors options to edit them:
-	- Change border color
-	- Change caption color
-	- Change title color
-
-<h2>Update 1.0.7</h2>
-
-- Add script to remove frame
-- Add typescript exemple
-
-<h2>Update 1.0.6</h2>
-
-- Fix exemple
-
-<h2>Update 1.0.5</h2>
-
-- Fix frameless (you can now resize the window)
-
-<h2>Update 1.0.4</h2>
-
-- Fix dll missing
-- Fix windows 11 old version
-
-<h2>Update 1.0.3</h2>
-
-- Add theme in arguments
-
-<h2>Update 1.0.2</h2>
-
-- Enable auto dark mod
-- Detect if operating system is windows 11
 
 ## Awesome applications using Mica-Electron
 

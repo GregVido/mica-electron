@@ -1,0 +1,35 @@
+main,
+fieldset {
+    background-color: #000000e3;
+    border: 1px solid #353535;
+    color: #fff;
+}
+
+fieldset {
+    background-color: #00000096;
+}
+
+button {
+    background: #000;
+    border: 1px solid rgb(24, 24, 24);
+    color: #fff;
+}
+
+button:hover  {
+    background: #141414;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #888;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #f1f1f1;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #f8f8f8;
+}

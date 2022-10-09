@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="..">
+      <UniqueIdentifier>{739DB09A-CC57-A953-A6CF-F64FA08E4FA7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:">
+      <UniqueIdentifier>{7B735499-E5DD-1C2B-6C26-70023832A1CF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users">
+      <UniqueIdentifier>{E9F714C1-DA89-54E2-60CF-39FEB20BF756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou">
+      <UniqueIdentifier>{126EF26F-262C-F1CF-C0B9-504825CF2E7B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive">
+      <UniqueIdentifier>{AB638830-36CA-1391-0BE8-C500827E1A7F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images">
+      <UniqueIdentifier>{FDE2D151-C225-C2A8-D6EC-CFF3DF41CABC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images\Documents">
+      <UniqueIdentifier>{87566BA0-CA33-1144-65F5-087C5F9D6C20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images\Documents\code">
+      <UniqueIdentifier>{AAB9748B-7F78-2868-73F9-3D157EBB12A8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images\Documents\code\js">
+      <UniqueIdentifier>{AFF4C650-55EE-4B49-D17B-E3562B397D81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica">
+      <UniqueIdentifier>{61A8FE07-F872-4C86-2819-5E954E94A825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\mica-electron npm v2">
+      <UniqueIdentifier>{2369C1BA-C66D-FE36-7BF0-75D14144E8D6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\mica-electron npm v2\node_modules">
+      <UniqueIdentifier>{56DF7A98-063D-FB9D-485C-089023B4C16A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\mica-electron npm v2\node_modules\node-gyp">
+      <UniqueIdentifier>{77348C0E-2034-7791-74D5-63C077DF5A3B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\mica-electron npm v2\node_modules\node-gyp\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..">
+      <UniqueIdentifier>{739DB09A-CC57-A953-A6CF-F64FA08E4FA7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\dwmExec.cc">
+      <Filter>..</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\mica-electron npm v2\node_modules\node-gyp\src\win_delay_load_hook.cc">
+      <Filter>C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\mica-electron npm v2\node_modules\node-gyp\src</Filter>
+    </ClCompile>
+    <None Include="..\binding.gyp">
+      <Filter>..</Filter>
+    </None>
+  </ItemGroup>
+</Project>
