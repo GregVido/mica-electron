@@ -143,6 +143,28 @@ const win = new BrowserWindow({
 removeFrame(win);
 ```
 
+## FAQ
+<details>
+  <summary>Error: '...\micaElectron.node' cas compiled against a different Node.js version using ...</summary>
+  If you are an error of nodejs version, use electron-packager to rebuild the project with the good version.
+
+  ```bash
+  $ npm install electron
+  $ npm install electron-rebuild
+  $ .\node_modules\.bin\electron-rebuild
+  ```
+</details>
+<details>
+  <summary>Build for 32 bits ?</summary>
+
+  If you want use `mica-electron` with 32 bits electron app, rebuild C++ script
+
+``` bash
+$ node-gyp rebuild --arch=ia32
+```
+</details>
+<br>
+
 ## Awesome applications using Mica-Electron
 
 - [MicaDiscord](https://www.micadiscord.com/) by GregVido and Arbitro

@@ -1,4 +1,4 @@
-const { executeDwm, redraw } = require('./source/build/Release/micaElectron');
+const { executeDwm, redraw } = require('./build/Release/micaElectron');
 
 // Object of different params
 const PARAMS = {
