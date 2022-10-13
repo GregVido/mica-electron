@@ -3,11 +3,11 @@
 <img src="files/img/img.png" name="exemple">
 <details>
   <summary>Exemple of effects</summary>
-  <center>
+  <div align=center>
 	<img src="files/img/demo-1.png" name="demo 0" width="30%">
 	<img src="files/img/demo-2.png" name="demo 1" width="30%">
 	<img src="files/img/demo-3.png" name="demo 2" width="30%"> 
-  </center> 
+  </div> 
 </details><br> 
 
 <b>Mica Electron</b> is a tool to add mica effect on electron app.<br>
@@ -97,11 +97,11 @@ executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.ROUND);		// Rounded
 executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.ROUNDSMALL);	// Small rounded
 executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.DONOTROUND);	// Square
 ```
-<center>
+<div align=center>
 <img src="files/img/corner-1.png" name="corner 0" width="10%">
 <img src="files/img/corner-2.png" name="corner 1" width="10%">
 <img src="files/img/corner-3.png" name="corner 2" width="10%"> 
-</center>
+</div>
 </details>
 
 <details>
@@ -113,9 +113,9 @@ executeDwm(HWND, PARAMS.BORDER_COLOR, VALUE.COLOR.FROM_RGB(244, 11, 11));	// Bor
 executeDwm(HWND, PARAMS.CAPTION_COLOR, VALUE.COLOR.FROM_RGB(38, 38, 38));	// Background titlebar color
 executeDwm(HWND, PARAMS.TEXT_COLOR, VALUE.COLOR.WHITE);			// Title text color
 ```
-<center>
+<div align=center>
 <img src="files/img/border.png" name="border" width="50%">
-</center>
+</div>
 </details><br>
 
 <h3>How to remove the frame ?</h3>
@@ -145,7 +145,7 @@ removeFrame(win);
 
 ## FAQ
 <details>
-  <summary>Error: '...\micaElectron.node' cas compiled against a different Node.js version using ...</summary>
+  <summary>Error: '...\micaElectron.node' was compiled against a different Node.js version using ...</summary>
   If you are an error of nodejs version, use electron-packager to rebuild the project with the good version.
 
   ```bash
@@ -168,3 +168,4 @@ $ node-gyp rebuild --arch=ia32
 ## Awesome applications using Mica-Electron
 
 - [MicaDiscord](https://www.micadiscord.com/) by GregVido and Arbitro
+- [Cider](https://github.com/ciderapp/Cider)
