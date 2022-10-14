@@ -4,6 +4,10 @@ body {
     padding: 10px;
 }
 
+h1 {
+    -webkit-app-region: drag;
+}
+
 main,
 fieldset {
     margin: auto;

@@ -49,8 +49,12 @@ function removeFrame(window) {
 
     const bounds = window.getBounds();
 
+    window.hide();
+
     executeDwm(HWND, PARAMS.FRAME, VALUE.FALSE);
     redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height, 0x0020);
+
+    window.show();
 }
 
 const { app, BrowserWindow, ipcMain } = require('electron');
@@ -60,6 +64,9 @@ const path = require('path');
 app.commandLine.appendSwitch("enable-transparent-visuals");
 
 app.on('ready', () => {
+
+    let hasFrame = true; // false to remvoe the window titlebar
+
     // Create a browserwindow
     const win = new BrowserWindow({
         width: 600,
@@ -70,7 +77,8 @@ app.on('ready', () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
-        }
+        },
+        frame: hasFrame
     });
 
     // Get the HWND
@@ -79,13 +87,26 @@ app.on('ready', () => {
     let params = PARAMS.BACKGROUND.MICA;
     let value = VALUE.THEME.AUTO;
 
-    executeDwm(HWND, params, value);
-    // removeFrame(win);
-
+    // Load file
     win.loadFile(path.join(__dirname, 'files', 'index.html'));
 
+    // show window when file loaded
     win.webContents.once('dom-ready', () => {
         win.show();
+    });
+
+    let frameRemoved = false;
+
+    win.on('show', () => {
+        if (!frameRemoved) {
+            frameRemoved = true;
+
+            if(!hasFrame)
+                removeFrame(win); // remove the frame when window is shown
+
+            // execute effect when window is shown
+            executeDwm(HWND, params, value);
+        }
     });
 
     // Change theme
