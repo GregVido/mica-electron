@@ -101,8 +101,10 @@ app.on('ready', () => {
         if (!frameRemoved) {
             frameRemoved = true;
 
-            if(!hasFrame)
+            if(!hasFrame) {
                 removeFrame(win); // remove the frame when window is shown
+                setInterval(() => executeDwm(HWND, params, value), 60); // refresh effect
+            }
 
             // execute effect when window is shown
             executeDwm(HWND, params, value);

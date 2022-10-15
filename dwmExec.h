@@ -7,4 +7,4 @@ typedef BOOL(WINAPI *pSetLayeredWindowAttributes)(HWND, int, byte, int);
 typedef BOOL(WINAPI *pDwmExtendFrameIntoClientArea)(HWND, MARGINS *);
 
 typedef BOOL(WINAPI *pSetWindowPos)(HWND, HWND, int, int, int, int, int);
-typedef HWND(WINAPI *pSetWindowLongA)(HWND, int, long);
+typedef HWND(WINAPI *pSetWindowLongPtrA)(HWND, int, long);

@@ -59,7 +59,7 @@
     "depd": "^1.1.2",
     "detect-libc": "^2.0.1",
     "ecc-jsbn": "^0.1.2",
-    "electron": "^21.1.0",
+    "electron": "^21.1.1",
     "electron-download": "^4.1.1",
     "electron-rebuild": "^3.2.9",
     "emoji-regex": "^8.0.0",

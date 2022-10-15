@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F3D5C312-6879-47FA-7F50-25FD96E1EB95}</ProjectGuid>
+    <ProjectGuid>{1CEF7235-839F-465D-C91D-EC244B0151FA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>micaElectron</RootNamespace>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
@@ -47,7 +47,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\Swagger\.electron-gyp\21.1.0\include\node;C:\Users\Swagger\.electron-gyp\21.1.0\src;C:\Users\Swagger\.electron-gyp\21.1.0\deps\openssl\config;C:\Users\Swagger\.electron-gyp\21.1.0\deps\openssl\openssl\include;C:\Users\Swagger\.electron-gyp\21.1.0\deps\uv\include;C:\Users\Swagger\.electron-gyp\21.1.0\deps\zlib;C:\Users\Swagger\.electron-gyp\21.1.0\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\fifou\.electron-gyp\21.1.1\include\node;C:\Users\fifou\.electron-gyp\21.1.1\src;C:\Users\fifou\.electron-gyp\21.1.1\deps\openssl\config;C:\Users\fifou\.electron-gyp\21.1.1\deps\openssl\openssl\include;C:\Users\fifou\.electron-gyp\21.1.1\deps\uv\include;C:\Users\fifou\.electron-gyp\21.1.1\deps\zlib;C:\Users\fifou\.electron-gyp\21.1.1\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -67,7 +67,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;DelayImp.lib;&quot;C:\\Users\\Swagger\\.electron-gyp\\21.1.0\\x64\\node.lib&quot;</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;DelayImp.lib;&quot;C:\\Users\\fifou\\.electron-gyp\\21.1.1\\x64\\node.lib&quot;</AdditionalDependencies>
       <AdditionalOptions>/ignore:4199 %(AdditionalOptions)</AdditionalOptions>
       <DelayLoadDLLs>node.exe;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -77,13 +77,13 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>C:\Users\Swagger\.electron-gyp\21.1.0\include\node;C:\Users\Swagger\.electron-gyp\21.1.0\src;C:\Users\Swagger\.electron-gyp\21.1.0\deps\openssl\config;C:\Users\Swagger\.electron-gyp\21.1.0\deps\openssl\openssl\include;C:\Users\Swagger\.electron-gyp\21.1.0\deps\uv\include;C:\Users\Swagger\.electron-gyp\21.1.0\deps\zlib;C:\Users\Swagger\.electron-gyp\21.1.0\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\fifou\.electron-gyp\21.1.1\include\node;C:\Users\fifou\.electron-gyp\21.1.1\src;C:\Users\fifou\.electron-gyp\21.1.1\deps\openssl\config;C:\Users\fifou\.electron-gyp\21.1.1\deps\openssl\openssl\include;C:\Users\fifou\.electron-gyp\21.1.1\deps\uv\include;C:\Users\fifou\.electron-gyp\21.1.1\deps\zlib;C:\Users\fifou\.electron-gyp\21.1.1\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NODE_GYP_MODULE_NAME=micaElectron;USING_UV_SHARED=1;USING_V8_SHARED=1;V8_DEPRECATION_WARNINGS=1;V8_DEPRECATION_WARNINGS;V8_IMMINENT_DEPRECATION_WARNINGS;_GLIBCXX_USE_CXX11_ABI=1;ELECTRON_ENSURE_CONFIG_GYPI;USING_ELECTRON_CONFIG_GYPI;V8_COMPRESS_POINTERS;V8_COMPRESS_POINTERS_IN_SHARED_CAGE;V8_ENABLE_SANDBOX;V8_SANDBOXED_POINTERS;V8_31BIT_SMIS_ON_64BIT_ARCH;V8_REVERSE_JSARGS;WIN32;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_HAS_EXCEPTIONS=0;OPENSSL_NO_PINSHARED;OPENSSL_THREADS;OPENSSL_NO_ASM;BUILDING_NODE_EXTENSION;HOST_BINARY=&quot;node.exe&quot;;DEBUG;_DEBUG;V8_ENABLE_CHECKS;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\Swagger\.electron-gyp\21.1.0\include\node;C:\Users\Swagger\.electron-gyp\21.1.0\src;C:\Users\Swagger\.electron-gyp\21.1.0\deps\openssl\config;C:\Users\Swagger\.electron-gyp\21.1.0\deps\openssl\openssl\include;C:\Users\Swagger\.electron-gyp\21.1.0\deps\uv\include;C:\Users\Swagger\.electron-gyp\21.1.0\deps\zlib;C:\Users\Swagger\.electron-gyp\21.1.0\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\fifou\.electron-gyp\21.1.1\include\node;C:\Users\fifou\.electron-gyp\21.1.1\src;C:\Users\fifou\.electron-gyp\21.1.1\deps\openssl\config;C:\Users\fifou\.electron-gyp\21.1.1\deps\openssl\openssl\include;C:\Users\fifou\.electron-gyp\21.1.1\deps\uv\include;C:\Users\fifou\.electron-gyp\21.1.1\deps\zlib;C:\Users\fifou\.electron-gyp\21.1.1\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -106,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;DelayImp.lib;&quot;C:\\Users\\Swagger\\.electron-gyp\\21.1.0\\x64\\node.lib&quot;</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;DelayImp.lib;&quot;C:\\Users\\fifou\\.electron-gyp\\21.1.1\\x64\\node.lib&quot;</AdditionalDependencies>
       <AdditionalOptions>/ignore:4199 %(AdditionalOptions)</AdditionalOptions>
       <DelayLoadDLLs>node.exe;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -116,7 +116,7 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>C:\Users\Swagger\.electron-gyp\21.1.0\include\node;C:\Users\Swagger\.electron-gyp\21.1.0\src;C:\Users\Swagger\.electron-gyp\21.1.0\deps\openssl\config;C:\Users\Swagger\.electron-gyp\21.1.0\deps\openssl\openssl\include;C:\Users\Swagger\.electron-gyp\21.1.0\deps\uv\include;C:\Users\Swagger\.electron-gyp\21.1.0\deps\zlib;C:\Users\Swagger\.electron-gyp\21.1.0\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\fifou\.electron-gyp\21.1.1\include\node;C:\Users\fifou\.electron-gyp\21.1.1\src;C:\Users\fifou\.electron-gyp\21.1.1\deps\openssl\config;C:\Users\fifou\.electron-gyp\21.1.1\deps\openssl\openssl\include;C:\Users\fifou\.electron-gyp\21.1.1\deps\uv\include;C:\Users\fifou\.electron-gyp\21.1.1\deps\zlib;C:\Users\fifou\.electron-gyp\21.1.1\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NODE_GYP_MODULE_NAME=micaElectron;USING_UV_SHARED=1;USING_V8_SHARED=1;V8_DEPRECATION_WARNINGS=1;V8_DEPRECATION_WARNINGS;V8_IMMINENT_DEPRECATION_WARNINGS;_GLIBCXX_USE_CXX11_ABI=1;ELECTRON_ENSURE_CONFIG_GYPI;USING_ELECTRON_CONFIG_GYPI;V8_COMPRESS_POINTERS;V8_COMPRESS_POINTERS_IN_SHARED_CAGE;V8_ENABLE_SANDBOX;V8_SANDBOXED_POINTERS;V8_31BIT_SMIS_ON_64BIT_ARCH;V8_REVERSE_JSARGS;WIN32;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_HAS_EXCEPTIONS=0;OPENSSL_NO_PINSHARED;OPENSSL_THREADS;OPENSSL_NO_ASM;BUILDING_NODE_EXTENSION;HOST_BINARY=&quot;node.exe&quot;;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
@@ -127,7 +127,7 @@
     <ClCompile Include="..\dwmExec.cc">
       <ObjectFileName>$(IntDir)\dwmExec.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="D:\Documents\js\mica-electron\node_modules\node-gyp\src\win_delay_load_hook.cc"/>
+    <ClCompile Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\mica electron\public\node_modules\node-gyp\src\win_delay_load_hook.cc"/>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
   <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets"/>

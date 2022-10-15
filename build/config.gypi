@@ -328,8 +328,8 @@
     "node_use_bundled_v8": "true",
     "node_use_dtrace": "false",
     "node_use_etw": "true",
-    "node_use_node_code_cache": "true",
-    "node_use_node_snapshot": "true",
+    "node_use_node_code_cache": "false",
+    "node_use_node_snapshot": "false",
     "node_use_openssl": "true",
     "node_use_v8_platform": "true",
     "node_with_ltcg": "false",
@@ -358,12 +358,12 @@
     "v8_random_seed": 0,
     "v8_trace_maps": 0,
     "v8_use_siphash": 1,
-    "want_separate_host_toolset": 0,
-    "nodedir": "C:\\Users\\Swagger\\.electron-gyp\\21.1.0",
+    "want_separate_host_toolset": 1,
+    "nodedir": "C:\\Users\\fifou\\.electron-gyp\\21.1.1",
     "standalone_static_library": 1,
     "msbuild_path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
     "runtime": "electron",
-    "target": "21.1.0",
+    "target": "21.1.1",
     "build_from_source": "true"
   }
 }

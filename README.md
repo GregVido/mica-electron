@@ -131,7 +131,7 @@ function removeFrame(window) {
     window.hide();
 
     executeDwm(HWND, PARAMS.FRAME, VALUE.FALSE);
-    redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height, 0x0020);
+    redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height);
 
     window.show();
 }
@@ -150,7 +150,7 @@ win.on('show', () => {
   if (!frameRemoved) {
     frameRemoved = true;
     removeFrame(win);
-    executeDwm(HWND, PARAMS.BACKGROUND.MICA, VALUE.THEME.AUTO); // apply effect after remove the frame
+    setInterval(() => executeDwm(HWND, params, value), 60); // refresh effect
   }
 });
 ```
