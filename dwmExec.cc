@@ -135,7 +135,7 @@ namespace demo
     }
 
     const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
-    const pSetWindowLongPtrA SetWindowLongPtrA = (pSetWindowLongPtrA)GetProcAddress(user32, "SetWindowLongPtrA");
+    const pSetWindowLongA SetWindowLongA = (pSetWindowLongA)GetProcAddress(user32, "SetWindowLongA");
 
     const HINSTANCE dwmapi = LoadLibrary(TEXT("dwmapi.dll"));
     const pDwmSetWindowAttribute DwmSetWindowAttribute = (pDwmSetWindowAttribute)GetProcAddress(dwmapi, "DwmSetWindowAttribute");
@@ -194,7 +194,7 @@ namespace demo
       DwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, &value, sizeof(int));
 
     else if (params == 9 && value == 0)
-      SetWindowLongPtrA(hwnd, -16, 0x004F0000L);
+      SetWindowLongA(hwnd, -16, 0x004F0000L);
 
     FreeLibrary(dwmapi);
     FreeLibrary(user32);
