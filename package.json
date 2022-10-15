@@ -238,8 +238,8 @@
     "url": "git+https://github.com/GregVido/mica-electron.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "GregVido",
+  "license": "Apache-2.0",
   "gypfile": true,
   "bugs": {
     "url": "https://github.com/GregVido/mica-electron/issues"
