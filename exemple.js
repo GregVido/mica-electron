@@ -51,7 +51,6 @@ function removeFrame(window) {
 
     window.hide();
 
-    executeDwm(HWND, PARAMS.FRAME, VALUE.FALSE);
     redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height, 0x0020);
 
     window.show();
