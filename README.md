@@ -1,6 +1,9 @@
-<h1>Mica Electron</h1>
-
+<h1 align=center>Mica Electron</h1>
+<div align=center>
 <img src="files/img/img.png" name="exemple">
+</div>
+<br>
+
 <details>
   <summary>Exemple of effects</summary>
   <div align=center>
@@ -15,11 +18,6 @@ This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.
 If you want use npm, click <a href="https://www.npmjs.com/package/mica-electron">here</a>.
 
 <h2>Usage</h2>
-To use <b>Mica Electron</b>, you must execute the file <a href="dwm_exec.exe">dwm_exec.exe</a> with threes arguments :<br>
-
-- HWND : the window to apply effect
-- EFFECT : the type of transparency
-- THEME : the color of effect
 
 The HWND can be recover with this ligne :
 ```js
@@ -180,3 +178,4 @@ $ node-gyp rebuild --arch=ia32
 
 - [MicaDiscord](https://www.micadiscord.com/) by GregVido and Arbitro
 - [Cider](https://github.com/ciderapp/Cider)
+- [Fluent Browser](https://github.com/ThePiGuy3141/fluent-browser) by <a href="https://github.com/ThePiGuy3141">ThePiGuy3141</a>
