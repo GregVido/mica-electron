@@ -64,7 +64,7 @@ app.commandLine.appendSwitch("enable-transparent-visuals");
 
 app.on('ready', () => {
 
-    let hasFrame = false; // false to remvoe the window titlebar
+    let hasFrame = true; // false to remvoe the window titlebar
 
     // Create a browserwindow
     const win = new BrowserWindow({
@@ -83,7 +83,7 @@ app.on('ready', () => {
     // Get the HWND
     const HWND = win.getNativeWindowHandle()["readInt32LE"]();
 
-    let params = PARAMS.BACKGROUND.TABBED_MICA;
+    let params = PARAMS.BACKGROUND.MICA;
     let value = VALUE.THEME.AUTO;
 
     // Load file
