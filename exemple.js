@@ -64,7 +64,7 @@ app.commandLine.appendSwitch("enable-transparent-visuals");
 
 app.on('ready', () => {
 
-    let hasFrame = true; // false to remvoe the window titlebar
+    let hasFrame = false; // false to remvoe the window titlebar
 
     // Create a browserwindow
     const win = new BrowserWindow({
@@ -83,7 +83,7 @@ app.on('ready', () => {
     // Get the HWND
     const HWND = win.getNativeWindowHandle()["readInt32LE"]();
 
-    let params = PARAMS.BACKGROUND.MICA;
+    let params = PARAMS.BACKGROUND.TABBED_MICA;
     let value = VALUE.THEME.AUTO;
 
     // Load file
@@ -97,17 +97,20 @@ app.on('ready', () => {
     let frameRemoved = false;
 
     win.on('show', () => {
+        executeDwm(HWND, params, value);
+
         if (!frameRemoved) {
             frameRemoved = true;
 
-            if(!hasFrame) {
+            if(!hasFrame)
                 removeFrame(win); // remove the frame when window is shown
-                setInterval(() => executeDwm(HWND, params, value), 60); // refresh effect
-            }
-
-            // execute effect when window is shown
-            executeDwm(HWND, params, value);
+            
         }
+    });
+
+    win.on('resize', () => {
+        if(!hasFrame)
+            setTimeout(() => executeDwm(HWND, params, value), 60); // refresh effect
     });
 
     // Change theme

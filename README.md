@@ -144,11 +144,15 @@ const win = new BrowserWindow({
 let frameRemoved = false;
 
 win.on('show', () => {
+  executeDwm(HWND, params, value);
   if (!frameRemoved) {
     frameRemoved = true;
     removeFrame(win);
-    setInterval(() => executeDwm(HWND, params, value), 60); // refresh effect
   }
+});
+
+win.on('resize', () => {
+  setTimeout(() => executeDwm(HWND, params, value), 60); // refresh effect
 });
 ```
 
@@ -179,3 +183,4 @@ $ node-gyp rebuild --arch=ia32
 - [MicaDiscord](https://www.micadiscord.com/) by GregVido and Arbitro
 - [Cider](https://github.com/ciderapp/Cider)
 - [Fluent Browser](https://github.com/ThePiGuy3141/fluent-browser) by <a href="https://github.com/ThePiGuy3141">ThePiGuy3141</a>
+- [Mica-Snap](https://github.com/GregVido/Mica-Snap) by GregVido
