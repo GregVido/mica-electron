@@ -40,8 +40,9 @@ bool isInsider()
   return getBuild() >= 22621;
 }
 
-bool isWin11() {
-    return getBuild() >= 22000;
+bool isWin11()
+{
+  return getBuild() >= 22000;
 }
 
 bool is_light_theme()
@@ -98,7 +99,8 @@ namespace demo
   {
     Isolate *isolate = args.GetIsolate();
 
-    if(!isWin11()) {
+    if (!isWin11())
+    {
       isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Mica-Electron work only on Windows 11.").ToLocalChecked()));
       return;
     }
@@ -149,12 +151,18 @@ namespace demo
     {
       bool insider = isInsider();
 
-      MARGINS margins = {-1};
-      DwmExtendFrameIntoClientArea(hwnd, &margins); // enable transparent
+      if(params != 1) { // if isn't DWMSBT_NONE
+          MARGINS margins = {-1};
+          DwmExtendFrameIntoClientArea(hwnd, &margins); // enable transparent
+      }
+      else {
+          MARGINS margins = {};
+          DwmExtendFrameIntoClientArea(hwnd, &margins); // disable transparent
+      }
 
       int enable = 0x00;
       // if dark mod, apply dark effect
-      if (value == 1 /* DARK */ || (value == 0 /* AUTO */ && !is_light_theme()))
+      if (value == 1 /* DARK */ || (value == 5 /* AUTO */ && !is_light_theme()))
         enable = 0x01;
 
       DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &enable, sizeof(int));
@@ -197,6 +205,65 @@ namespace demo
       SetWindowLongA(hwnd, -16, 0x004F0000L);
 
     FreeLibrary(dwmapi);
+    FreeLibrary(user32);
+    args.GetReturnValue().Set(1);
+  }
+
+  void executeUser32(const FunctionCallbackInfo<Value> &args)
+  {
+    Isolate *isolate = args.GetIsolate();
+
+    if (args.Length() < 1)
+    {
+      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HWND argument missing.").ToLocalChecked()));
+      return;
+    }
+    else if (args.Length() < 2)
+    {
+      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "PARAMS argument missing.").ToLocalChecked()));
+      return;
+    }
+    else if (args.Length() < 3)
+    {
+      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "VALUE argument missing.").ToLocalChecked()));
+      return;
+    }
+    else if (!args[0]->IsNumber())
+    {
+      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HWND argument must be an integer.").ToLocalChecked()));
+      return;
+    }
+    else if (!args[1]->IsNumber())
+    {
+      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "PARAMS argument must be an integer.").ToLocalChecked()));
+      return;
+    }
+    else if (!args[2]->IsNumber())
+    {
+      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "VALUE argument must be an integer.").ToLocalChecked()));
+      return;
+    }
+
+    const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
+    const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
+
+    HWND hwnd = (HWND)(long)args[0].As<Number>()->Value();
+    int params = (int)args[1].As<Number>()->Value();
+    int value = (int)args[2].As<Number>()->Value();
+
+    ACCENTPOLICY policy;
+    policy.nAccentState = params;
+    policy.nFlags = 2;
+    policy.nColor = value;
+    policy.nAnimationId = 0;
+
+    WINCOMATTRPDATA data;
+    data.nAttribute = 19;
+    data.pData = &policy;
+    data.ulDataSize = sizeof(policy);
+
+    SetWindowCompositionAttribute(hwnd, &data);
+
     FreeLibrary(user32);
     args.GetReturnValue().Set(1);
   }
@@ -275,6 +342,7 @@ namespace demo
   {
     NODE_SET_METHOD(exports, "executeDwm", executeDwm);
     NODE_SET_METHOD(exports, "redraw", refreshWindow);
+    NODE_SET_METHOD(exports, "executeUser32", executeUser32);
   }
 
   NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)

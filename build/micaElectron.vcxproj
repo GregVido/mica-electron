@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1CEF7235-839F-465D-C91D-EC244B0151FA}</ProjectGuid>
+    <ProjectGuid>{44FBF4B4-5EDD-F302-42FA-9CBE3CEC6AA2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>micaElectron</RootNamespace>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
@@ -127,7 +127,7 @@
     <ClCompile Include="..\dwmExec.cc">
       <ObjectFileName>$(IntDir)\dwmExec.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\mica electron\public\node_modules\node-gyp\src\win_delay_load_hook.cc"/>
+    <ClCompile Include="C:\Users\fifou\OneDrive\Images\Documents\code\js\mica\npm mica electron\node_modules\node-gyp\src\win_delay_load_hook.cc"/>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
   <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets"/>

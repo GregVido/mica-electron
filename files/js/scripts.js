@@ -40,20 +40,14 @@ window.onload = () => {
     const colorTitle = document.getElementById('colorTitle');
 
     colorBorder.addEventListener('input', () => {
-        let color = htmlToColor(colorBorder.value.slice(1));
-
-        setParams(6, color);
+        setParams(6, colorBorder.value);
     });
 
     colorCaption.addEventListener('input', () => {
-        let color = htmlToColor(colorCaption.value.slice(1));
-
-        setParams(7, color);
+        setParams(7, colorCaption.value);
     });
 
     colorTitle.addEventListener('input', () => {
-        let color = htmlToColor(colorTitle.value.slice(1));
-
-        setParams(8, color);
+        setParams(8, colorTitle.value);
     });
 }

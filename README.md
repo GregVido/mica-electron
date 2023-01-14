@@ -1,28 +1,134 @@
 <h1 align=center>Mica Electron</h1>
 <div align=center>
-<img src="files/img/img.png" name="exemple">
+<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/img.png" name="exemple">
+
+<b>Mica Electron</b> is a tool to add mica effect on electron app.<br>
+This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.<br>
+<b>Mica electron is now compatible with windows 10</b>
 </div>
-<br>
 
 <details>
   <summary>Exemple of effects</summary>
   <div align=center>
-	<img src="files/img/demo-1.png" name="demo 0" width="30%">
-	<img src="files/img/demo-2.png" name="demo 1" width="30%">
-	<img src="files/img/demo-3.png" name="demo 2" width="30%"> 
+	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-1.png" name="demo 0" width="30%">
+	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-2.png" name="demo 1" width="30%">
+	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-3.png" name="demo 2" width="30%"> 
   </div> 
 </details><br> 
 
-<b>Mica Electron</b> is a tool to add mica effect on electron app.<br>
-This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.
-If you want use npm, click <a href="https://www.npmjs.com/package/mica-electron">here</a>.
-
-<h2>Usage</h2>
-
-The HWND can be recover with this ligne :
-```js
-const HWND = win.getNativeWindowHandle()["readInt32LE"]();
+## Quickstart
+```bash
+$ npm install mica-electron
 ```
+```js
+const electron = require('electron');
+const { PARAMS, VALUE,  MicaBrowserWindow, IS_WINDOWS_11 } = require('mica-electron');
+const path = require('path');
+
+electron.app.on('ready', () => {
+    const win = new MicaBrowserWindow({
+        width: 800,
+        height: 600,
+        autoHideMenuBar: true,
+        show: false,
+        // frame: false // -> now work, you can remove the frame properly !!
+    });
+
+    win.setDarkTheme();
+    win.setMicaEffect();
+
+    win.loadFile(path.join(__dirname, 'files', 'index.html'));
+
+    win.webContents.once('dom-ready', () => {
+        win.show();
+    });
+});
+```
+
+<details>
+  <summary>Apply effect for windows 11</summary>
+    You can apply different mica effect :
+
+```js
+win.setMicaEffect();        // Mica Effect
+win.setMicaTabbedEffect();  // Mica Tabbed
+win.setMicaAcrylicEffect(); // Acrylic for windows 11
+```
+<div align=center>
+<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-1.png" name="corner 0" width="20%">
+<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-2.png" name="corner 1" width="20%">
+<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-3.png" name="corner 2" width="20%"> 
+</div>
+</details>
+
+<details>
+  <summary>Change theme for windows 11</summary>
+  You can change theme :
+
+```js
+win.setAutoTheme();   // Same theme as computer
+win.setLightTheme();  // Force light theme
+win.setDarkTheme();   // Force dark theme
+```
+</details>
+
+<details>
+  <summary>Apply effect for windows 10</summary>
+  You can apply different blur effect :
+
+```js
+win.setTransparent(); // Transparent window
+win.setBlur();        // Blurred window
+win.setAcrylic();     // Acrylic window
+```
+</details>
+
+<details>
+  <summary>Change radius</summary>
+    You can change corner radius :
+
+```js
+win.setRoundedCorner();	      // Rounded
+win.setSmallRoundedCorner();  // Small rounded
+win.setSquareCorner();	      // Square
+```
+<div align=center>
+<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/corner-1.png" name="corner 0" width="10%">
+<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/corner-2.png" name="corner 1" width="10%">
+<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/corner-3.png" name="corner 2" width="10%"> 
+</div>
+</details>
+
+<details>
+  <summary>Change window colors</summary>
+    You can change window colors :
+
+```js
+win.setBorderColor('#f40b0b');  // Border color
+win.setCaptionColor('#262626'); // Background titlebar color
+win.setTitleTextColor('#fff');  // Title text color
+```
+<div align=center>
+<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/border.png" name="border" width="50%">
+</div>
+</details><br>
+
+
+## Source Install / Manual Compilation
+To compile from source it's easiest to use
+[`node-gyp`](https://github.com/TooTallNate/node-gyp):
+
+``` bash
+$ npm install -g node-gyp
+```
+
+Now you can compile `mica-electron`:
+
+``` bash
+$ cd .\node_modules\mica-electron\
+$ node-gyp rebuild
+```
+## Objects details
 <details>
   <summary>PARAMS Object</summary>
   The params is a number, you can has an object to help you:
@@ -47,12 +153,12 @@ const HWND = win.getNativeWindowHandle()["readInt32LE"]();
 
 <details>
   <summary>VALUE Object</summary>
-The value is a string, you can has an object to help you:
+The value is a number, you can has an object to help you:
 
 ```js
 const VALUE = {
     THEME: {
-        AUTO: 0,	// select theme by the windows theme
+        AUTO: 5,	// select theme by the windows theme
         DARK: 1,	// select the dark theme
         LIGHT: 2,	// select the white theme
     },
@@ -76,85 +182,12 @@ const VALUE = {
     TRUE: 1
 }
 ```
-</details><br>
-
-You can apply effect with this code :
-```js
-const { executeDwm, redraw } = require('./source/build/Release/micaElectron');
-// the redraw function is for removing the frame
-
-executeDwm(HWND, params, value);
-```
-
-<details>
-  <summary>Change radius</summary>
-    You can change corner radius :
-
-```js
-executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.ROUND);		// Rounded
-executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.ROUNDSMALL);	// Small rounded
-executeDwm(HWND, PARAMS.CORNER, VALUE.CORNER.DONOTROUND);	// Square
-```
-<div align=center>
-<img src="files/img/corner-1.png" name="corner 0" width="10%">
-<img src="files/img/corner-2.png" name="corner 1" width="10%">
-<img src="files/img/corner-3.png" name="corner 2" width="10%"> 
-</div>
 </details>
 
 <details>
-  <summary>Change window colors</summary>
-    You can change window colors :
-
-```js
-executeDwm(HWND, PARAMS.BORDER_COLOR, VALUE.COLOR.FROM_RGB(244, 11, 11));	// Border color
-executeDwm(HWND, PARAMS.CAPTION_COLOR, VALUE.COLOR.FROM_RGB(38, 38, 38));	// Background titlebar color
-executeDwm(HWND, PARAMS.TEXT_COLOR, VALUE.COLOR.WHITE);			// Title text color
-```
-<div align=center>
-<img src="files/img/border.png" name="border" width="50%">
-</div>
+  <summary>IS_WINDOWS_11</summary>
+IS_WINDOWS_11 is a boolean constant to detect the OS version. If it is true then it's a windows 11 computer, otherwise it is another version (10, 8, 7 ...)
 </details><br>
-
-<h3>How to remove the frame ?</h3>
-
-You can remove the frame with the redraw function with this code:
-
-```js
-function removeFrame(window) {
-    const HWND = window.getNativeWindowHandle()["readInt32LE"]();
-
-    const bounds = window.getBounds();
-
-    window.hide();
-
-    redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height);
-
-    window.show();
-}
-
-const win = new BrowserWindow({
-    width: 600,
-    height: 360,
-    backgroundColor: '#000000ff', // Transparent background
-    frame: false, // important
-    ...
-});
-
-let frameRemoved = false;
-
-win.on('show', () => {
-  executeDwm(HWND, params, value);
-  if (!frameRemoved) {
-    frameRemoved = true;
-    removeFrame(win);
-  }
-});
-
-win.on('resize', () => {
-  setTimeout(() => executeDwm(HWND, params, value), 60); // refresh effect
-});
-```
 
 ## FAQ
 <details>
@@ -173,7 +206,10 @@ win.on('resize', () => {
   If you want use `mica-electron` with 32 bits electron app, rebuild C++ script
 
 ``` bash
+$ cd .\node_modules\mica-electron\
 $ node-gyp rebuild --arch=ia32
+$ cd ..\..\
+$ .\node_modules\.bin\electron-rebuild --arch=ia32
 ```
 </details>
 <br>
