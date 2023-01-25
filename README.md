@@ -217,6 +217,7 @@ $ .\node_modules\.bin\electron-rebuild --arch=ia32
 ## Awesome applications using Mica-Electron
 
 - [MicaDiscord](https://www.micadiscord.com/) by GregVido and Arbitro
-- [Cider](https://github.com/ciderapp/Cider)
+- [Cider](https://github.com/ciderapp/Cider) by [Cider Collective](https://github.com/ciderapp)
 - [Fluent Browser](https://github.com/ThePiGuy3141/fluent-browser) by <a href="https://github.com/ThePiGuy3141">ThePiGuy3141</a>
 - [Mica-Snap](https://github.com/GregVido/Mica-Snap) by GregVido
+- [SysMocap](https://github.com/xianfei/SysMocap) by [xianfei](https://github.com/xianfei)

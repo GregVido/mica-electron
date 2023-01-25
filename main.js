@@ -20,6 +20,10 @@ const os = require('os');
 
 electron.app.commandLine.appendSwitch("enable-transparent-visuals");
 
+/**
+ * Detect if OS is windows 11
+ * @returns {Boolean} True if windows 11
+ */
 function isWin11() {
     const version = os.release().split('.');
     if (version.length == 3)
@@ -117,11 +121,18 @@ let getColorByString = (str) => {
 
 class BrowserWindow extends electron.BrowserWindow {
 
+    /** @type {Number} */
     effect = PARAMS.BACKGROUND.AUTO;
+    /** @type {Number} */
     theme = VALUE.THEME.AUTO;
 
+    /** @type {Boolean} */
     useDWM = false;
 
+    /**
+     * Create electron BrowserWindow with mica effect features
+     * @param  {...Object} args 
+     */
     constructor(...args) {
         if (args.length > 0) {
             args[0].transparent = false;
@@ -231,7 +242,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
     /**
     * Set border color to the electron app
-    * @param  {Number} color HTML color (#RRGGBB, #RGB, ou rgb(r, g, b))
+    * @param  {Number} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setBorderColor(color) {
         color = getColorByString(color);
@@ -240,7 +251,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
     /**
     * Set caption color to the electron app
-    * @param  {Number} color HTML color (#RRGGBB, #RGB, ou rgb(r, g, b))
+    * @param  {Number} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setCaptionColor(color) {
         color = getColorByString(color);
@@ -249,7 +260,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
     /**
     * Set title text color to the electron app
-    * @param  {Number} color HTML color (#RRGGBB, #RGB, ou rgb(r, g, b))
+    * @param  {Number} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setTitleTextColor(color) {
         color = getColorByString(color);
