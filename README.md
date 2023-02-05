@@ -13,9 +13,9 @@ This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.<br>
 	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-1.png" name="demo 0" width="30%">
 	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-2.png" name="demo 1" width="30%">
 	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-3.png" name="demo 2" width="30%"> 
-  <a href='https://micadiscord.com/img/mica-electron-preview.gif'>
 
-  Click here to see the animation preview.</a>
+  
+  <a href='https://micadiscord.com/img/mica-electron-preview.gif'>Click here to see the animation preview.</a>
   </div> 
 </details><br> 
 
