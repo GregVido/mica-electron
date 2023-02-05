@@ -15,6 +15,12 @@ app.on('ready', () => {
         }
     });
 
+    if(IS_WINDOWS_11)
+        win.setMicaEffect();
+
+    else
+        win.setAcrylic();
+
     win.loadFile(path.join(__dirname, 'files', 'index.html'));
 
     win.webContents.once('dom-ready', () => {

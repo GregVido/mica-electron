@@ -87,7 +87,7 @@ const VALUE = {
 
 /**
  * Convert HTML color to windows color
- * @param  {Number} str HTML color
+ * @param  {String} str HTML color
  * @return {Number}     windows color (int, 24 bits)
  */
 let getColorByString = (str) => {
@@ -242,7 +242,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
     /**
     * Set border color to the electron app
-    * @param  {Number} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
+    * @param  {String} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setBorderColor(color) {
         color = getColorByString(color);
@@ -251,7 +251,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
     /**
     * Set caption color to the electron app
-    * @param  {Number} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
+    * @param  {String} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setCaptionColor(color) {
         color = getColorByString(color);
@@ -260,7 +260,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
     /**
     * Set title text color to the electron app
-    * @param  {Number} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
+    * @param  {String} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setTitleTextColor(color) {
         color = getColorByString(color);
@@ -289,6 +289,19 @@ class BrowserWindow extends electron.BrowserWindow {
     setAcrylic() {
         this.disableDWM();
         this.executeUser32(4, 0x00909090);
+    }
+
+    /**
+     * Apply custom effect of SetWindowCompositionAttribute (windows 7+)
+     * @param {Number} nAccentState 
+     * @param {String} color HTML color
+     * @param {Number} a Alpha intensity (0 < a < 1)
+     */
+    setCustomEffect(nAccentState, color, a) {
+        a = Math.min(Math.max(Math.round(a * 255), 0), 255);
+        this.disableDWM();
+        const colorToInt = getColorByString(color);
+        this.executeUser32(nAccentState, (a << 24) + colorToInt);
     }
 
     /**
