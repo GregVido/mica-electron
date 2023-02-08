@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#pragma warning(disable: 4996) // GetVersion() was declared deprecated
+#pragma warning(disable: 4312) // long -> HWND size >
+
 #include <node.h>
 #include "dwmExec.h"
 

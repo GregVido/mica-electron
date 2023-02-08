@@ -1,6 +1,6 @@
 <h1 align=center>Mica Electron</h1>
 <div align=center>
-<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/img.png" name="exemple">
+<img src="https://micadiscord.com/img/preview/img.png" name="exemple">
 
 <b>Mica Electron</b> is a tool to add mica effect on electron app.<br>
 This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.<br>
@@ -10,9 +10,9 @@ This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.<br>
 <details>
   <summary>Exemple of effects</summary>
   <div align=center>
-	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-1.png" name="demo 0" width="30%">
-	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-2.png" name="demo 1" width="30%">
-	<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-3.png" name="demo 2" width="30%"> 
+	<img src="https://micadiscord.com/img/preview/demo-1.png" name="demo 0" width="30%">
+	<img src="https://micadiscord.com/img/preview/demo-2.png" name="demo 1" width="30%">
+	<img src="https://micadiscord.com/img/preview/demo-3.png" name="demo 2" width="30%"> 
 
   
   <a href='https://micadiscord.com/img/mica-electron-preview.gif'>Click here to see the animation preview.</a>
@@ -58,9 +58,9 @@ win.setMicaTabbedEffect();  // Mica Tabbed
 win.setMicaAcrylicEffect(); // Acrylic for windows 11
 ```
 <div align=center>
-<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-1.png" name="corner 0" width="20%">
-<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-2.png" name="corner 1" width="20%">
-<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/demo-3.png" name="corner 2" width="20%"> 
+<img src="https://micadiscord.com/img/preview/demo-1.png" name="corner 0" width="20%">
+<img src="https://micadiscord.com/img/preview/demo-2.png" name="corner 1" width="20%">
+<img src="https://micadiscord.com/img/preview/demo-3.png" name="corner 2" width="20%"> 
 </div>
 </details>
 
@@ -96,9 +96,9 @@ win.setSmallRoundedCorner();  // Small rounded
 win.setSquareCorner();	      // Square
 ```
 <div align=center>
-<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/corner-1.png" name="corner 0" width="10%">
-<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/corner-2.png" name="corner 1" width="10%">
-<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/corner-3.png" name="corner 2" width="10%"> 
+<img src="https://micadiscord.com/img/preview/corner-1.png" name="corner 0" width="10%">
+<img src="https://micadiscord.com/img/preview/corner-2.png" name="corner 1" width="10%">
+<img src="https://micadiscord.com/img/preview/corner-3.png" name="corner 2" width="10%"> 
 </div>
 </details>
 
@@ -112,7 +112,7 @@ win.setCaptionColor('#262626'); // Background titlebar color
 win.setTitleTextColor('#fff');  // Title text color
 ```
 <div align=center>
-<img src="https://raw.githubusercontent.com/GregVido/mica-electron/main/files/img/border.png" name="border" width="50%">
+<img src="https://micadiscord.com/img/preview/border.png" name="border" width="50%">
 </div>
 </details>
 
