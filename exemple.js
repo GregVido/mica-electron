@@ -15,7 +15,7 @@ app.on('ready', () => {
         }
     });
 
-    if(IS_WINDOWS_11)
+    if (IS_WINDOWS_11)
         win.setMicaEffect();
 
     else

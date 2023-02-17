@@ -205,6 +205,7 @@ class BrowserWindow extends electron.BrowserWindow {
      * Apply dark theme to the electron app
      */
     setDarkTheme() {
+        electron.nativeTheme.themeSource = 'dark';
         this.executeDwm(this.effect, VALUE.THEME.DARK);
     }
 
@@ -212,6 +213,7 @@ class BrowserWindow extends electron.BrowserWindow {
      * Apply light theme to the electron app
      */
     setLightTheme() {
+        electron.nativeTheme.themeSource = 'light';
         this.executeDwm(this.effect, VALUE.THEME.LIGHT);
     }
 
@@ -219,6 +221,7 @@ class BrowserWindow extends electron.BrowserWindow {
     * Apply auto detection theme to the electron app
     */
     setAutoTheme() {
+        electron.nativeTheme.themeSource = 'system';
         this.executeDwm(this.effect, VALUE.THEME.AUTO);
     }
 
