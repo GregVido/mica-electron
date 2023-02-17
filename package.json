@@ -2,7 +2,7 @@
   "name": "mica-electron",
   "version": "1.2.6",
   "description": "Tool to add mica effect of windows 11 in electron app",
-  "main": "exemple.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "install": "node-gyp rebuild"
