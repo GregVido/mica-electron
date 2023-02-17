@@ -154,7 +154,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
         let frameRemoved = true;
 
-        this.on('show', () => {
+        let onWindowShow = () => {
             applyEffect();
 
             if (frameRemoved) {
@@ -166,7 +166,10 @@ class BrowserWindow extends electron.BrowserWindow {
                     this.show();
                 }
             }
-        });
+        }
+
+        this.on('show', onWindowShow);
+        this.on('restore',  onWindowShow);
 
         this.on('resize', () => {
             if (needDeleteframe)
