@@ -172,6 +172,11 @@ class BrowserWindow extends electron.BrowserWindow {
         this.on('show', onWindowShow);
         this.on('restore', onWindowShow);
 
+        this.on('close', () => {
+            if (this.marginTimer)
+                clearInterval(this.marginTimer);
+        });
+
         this.on('resize', () => {
             if (needDeleteframe)
                 setTimeout(applyEffect, 60); // refresh effect
