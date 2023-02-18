@@ -56,7 +56,8 @@ const PARAMS = {
     BORDER_COLOR: 6,
     CAPTION_COLOR: 7,
     TEXT_COLOR: 8,
-    FRAME: 9
+    FRAME: 9,
+    MARGIN: 10
 }
 
 const VALUE = {
@@ -169,12 +170,42 @@ class BrowserWindow extends electron.BrowserWindow {
         }
 
         this.on('show', onWindowShow);
-        this.on('restore',  onWindowShow);
+        this.on('restore', onWindowShow);
 
         this.on('resize', () => {
             if (needDeleteframe)
                 setTimeout(applyEffect, 60); // refresh effect
         });
+        /*
+               //  electron.nativeTheme.on('updated', () => {
+                    if (needDeleteframe) {
+                        removeFrame(this);
+                        setTimeout(applyEffect, 100);
+                    }
+                });*/
+    }
+
+    /**
+     * Disable transparent for mica effect
+     */
+    disableMargin() {
+        if (this.marginTimer) {
+            clearInterval(this.marginTimer);
+            this.marginTimer = null;
+        }
+        this.executeDwm(PARAMS.MARGIN, 1);
+    }
+
+    /**
+     * Enable transparent for mica effect
+     */
+    enableMargin() {
+        if (this.marginTimer)
+            clearInterval(this.marginTimer);
+
+        this.marginTimer = setInterval(() => {
+            this.executeDwm(PARAMS.MARGIN, 0);
+        }, 1);
     }
 
     /**
@@ -182,6 +213,7 @@ class BrowserWindow extends electron.BrowserWindow {
      */
     setMicaEffect() {
         this.disableUser32();
+        this.enableMargin();
         this.executeDwm(PARAMS.BACKGROUND.MICA, this.theme);
     }
 
@@ -190,6 +222,7 @@ class BrowserWindow extends electron.BrowserWindow {
      */
     setMicaTabbedEffect() {
         this.disableUser32();
+        this.enableMargin();
         this.executeDwm(PARAMS.BACKGROUND.TABBED_MICA, this.theme);
     }
 
@@ -198,6 +231,7 @@ class BrowserWindow extends electron.BrowserWindow {
      */
     setMicaAcrylicEffect() {
         this.disableUser32();
+        this.enableMargin();
         this.executeDwm(PARAMS.BACKGROUND.ACRYLIC, this.theme);
     }
 
@@ -326,6 +360,7 @@ class BrowserWindow extends electron.BrowserWindow {
         if (this.useDWM)
             this.executeDwm(PARAMS.BACKGROUND.NONE, this.theme);
         this.useDWM = false;
+        this.disableMargin();
     }
 
     /**

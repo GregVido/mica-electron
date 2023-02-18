@@ -153,16 +153,7 @@ namespace demo
     if (params < 5)
     {
       bool insider = isInsider();
-
-      if(params != 1) { // if isn't DWMSBT_NONE
-          MARGINS margins = {-1};
-          DwmExtendFrameIntoClientArea(hwnd, &margins); // enable transparent
-      }
-      else {
-          MARGINS margins = {};
-          DwmExtendFrameIntoClientArea(hwnd, &margins); // disable transparent
-      }
-
+      
       int enable = 0x00;
       // if dark mod, apply dark effect
       if (value == 1 /* DARK */ || (value == 5 /* AUTO */ && !is_light_theme()))
@@ -206,6 +197,16 @@ namespace demo
 
     else if (params == 9 && value == 0)
       SetWindowLongA(hwnd, -16, 0x004F0000L);
+
+    else if (params == 10 && value == 0) {
+      MARGINS margins = {-1};
+      DwmExtendFrameIntoClientArea(hwnd, &margins); 
+    }
+
+    else if (params == 10 && value == 1) {
+      MARGINS margins = {};
+      DwmExtendFrameIntoClientArea(hwnd, &margins); 
+    }
 
     FreeLibrary(dwmapi);
     FreeLibrary(user32);

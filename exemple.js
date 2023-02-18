@@ -7,13 +7,15 @@ app.on('ready', () => {
         width: 800,
         height: 600,
         autoHideMenuBar: true,
-        show: false,
+        show: true,
         // frame: false, // -> now work, you can remove the frame properly !!
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
         }
     });
+
+    win.setLightTheme();
 
     if (IS_WINDOWS_11)
         win.setMicaEffect();
