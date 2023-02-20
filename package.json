@@ -1,6 +1,6 @@
 {
   "name": "mica-electron",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Tool to add mica effect of windows 11 in electron app",
   "main": "main.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "url": "https://github.com/GregVido/mica-electron/issues"
   },
   "homepage": "https://github.com/GregVido/mica-electron",
-  "dependencies": {
+  "devDependencies": {
     "electron": "^22.3.0",
     "electron-rebuild": "^3.2.9"
   }
