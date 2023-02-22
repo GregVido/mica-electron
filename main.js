@@ -181,13 +181,6 @@ class BrowserWindow extends electron.BrowserWindow {
             if (needDeleteframe)
                 setTimeout(applyEffect, 60); // refresh effect
         });
-        /*
-               //  electron.nativeTheme.on('updated', () => {
-                    if (needDeleteframe) {
-                        removeFrame(this);
-                        setTimeout(applyEffect, 100);
-                    }
-                });*/
     }
 
     /**
@@ -209,7 +202,12 @@ class BrowserWindow extends electron.BrowserWindow {
             clearInterval(this.marginTimer);
 
         this.marginTimer = setInterval(() => {
-            this.executeDwm(PARAMS.MARGIN, 0);
+            try {
+                this.executeDwm(PARAMS.MARGIN, 0);
+            } catch(e) {
+                clearInterval(this.marginTimer);
+                this.marginTimer = null;
+            }
         }, 1);
     }
 
