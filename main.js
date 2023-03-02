@@ -191,7 +191,8 @@ class BrowserWindow extends electron.BrowserWindow {
             clearInterval(this.marginTimer);
             this.marginTimer = null;
         }
-        this.executeDwm(PARAMS.MARGIN, 1);
+        if(this.useDWM)
+            this.executeDwm(PARAMS.MARGIN, 1);
     }
 
     /**
@@ -362,8 +363,8 @@ class BrowserWindow extends electron.BrowserWindow {
     disableDWM() {
         if (this.useDWM)
             this.executeDwm(PARAMS.BACKGROUND.NONE, this.theme);
-        this.useDWM = false;
         this.disableMargin();
+        this.useDWM = false;
     }
 
     /**
