@@ -25,7 +25,7 @@ $ npm install mica-electron
 ```
 ```js
 const electron = require('electron');
-const { PARAMS, VALUE,  MicaBrowserWindow, IS_WINDOWS_11 } = require('mica-electron');
+const { PARAMS, VALUE,  MicaBrowserWindow, IS_WINDOWS_11, WIN10 } = require('mica-electron');
 const path = require('path');
 
 electron.app.on('ready', () => {
@@ -121,8 +121,8 @@ win.setTitleTextColor('#fff');  // Title text color
     You can change window colors :
 
 ```js
-win.setCustomEffect(2, '#34ebc0', 0.5); // Transparent
-win.setCustomEffect(4, '#34ebc0', 0.4); // Blur
+win.setCustomEffect(WIN10.TRANSPARENT, '#34ebc0', 0.5); // Transparent
+win.setCustomEffect(WIN10.ACRYLIC, '#34ebc0', 0.4); // Acrylic
 ```
 <div align=center>
 <img src="https://micadiscord.com/img/mica-electron-custom-exemple.png" name="border" width="40%">
@@ -206,6 +206,19 @@ const VALUE = {
 <details>
   <summary>IS_WINDOWS_11</summary>
 IS_WINDOWS_11 is a boolean constant to detect the OS version. If it is true then it's a windows 11 computer, otherwise it is another version (10, 8, 7 ...)
+</details>
+
+<details>
+  <summary>WIN10 Object</summary>
+The value is a number, you can has an object to help you:
+
+```js
+const WIN10 = {
+    TRANSPARENT: 2,
+    BLURBEHIND: 3, // didn't work on windows 11
+    ACRYLIC: 4
+}
+```
 </details><br>
 
 ## FAQ

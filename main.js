@@ -86,6 +86,12 @@ const VALUE = {
     TRUE: 1
 }
 
+const WIN10 = {
+    TRANSPARENT: 2,
+    BLURBEHIND: 3,
+    ACRYLIC: 4
+}
+
 /**
  * Convert HTML color to windows color
  * @param  {String} str HTML color
@@ -191,7 +197,7 @@ class BrowserWindow extends electron.BrowserWindow {
             clearInterval(this.marginTimer);
             this.marginTimer = null;
         }
-        if(this.useDWM)
+        if (this.useDWM)
             this.executeDwm(PARAMS.MARGIN, 1);
     }
 
@@ -205,7 +211,7 @@ class BrowserWindow extends electron.BrowserWindow {
         this.marginTimer = setInterval(() => {
             try {
                 this.executeDwm(PARAMS.MARGIN, 0);
-            } catch(e) {
+            } catch (e) {
                 clearInterval(this.marginTimer);
                 this.marginTimer = null;
             }
@@ -316,7 +322,7 @@ class BrowserWindow extends electron.BrowserWindow {
     */
     setTransparent() {
         this.disableDWM();
-        this.executeUser32(2, 0x00ffffff);
+        this.executeUser32(WIN10.TRANSPARENT, 0x00ffffff);
     }
 
     /**
@@ -324,7 +330,7 @@ class BrowserWindow extends electron.BrowserWindow {
     */
     setBlur() {
         this.disableDWM();
-        this.executeUser32(3, 0x00ffffff);
+        this.executeUser32(WIN10.BLURBEHIND, 0x00ffffff);
     }
 
     /**
@@ -332,7 +338,7 @@ class BrowserWindow extends electron.BrowserWindow {
     */
     setAcrylic() {
         this.disableDWM();
-        this.executeUser32(4, 0x00909090);
+        this.executeUser32(WIN10.ACRYLIC, 0x00909090);
     }
 
     /**
@@ -398,5 +404,6 @@ module.exports = {
     PARAMS: PARAMS,
     VALUE: VALUE,
     MicaBrowserWindow: BrowserWindow,
-    IS_WINDOWS_11: isWin11()
+    IS_WINDOWS_11: isWin11(),
+    WIN10: WIN10
 };

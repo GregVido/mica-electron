@@ -1,5 +1,5 @@
 const { app, ipcMain } = require('electron');
-const { PARAMS, VALUE, MicaBrowserWindow, IS_WINDOWS_11 } = require('./main.js');
+const { PARAMS, VALUE, MicaBrowserWindow, IS_WINDOWS_11, WIN10 } = require('./main.js');
 const path = require('path');
 
 app.on('ready', () => {
@@ -21,7 +21,7 @@ app.on('ready', () => {
         win.setMicaEffect();
 
     else
-        win.setAcrylic();
+        win.setCustomEffect(WIN10.ACRYLIC, '#401896', .2);
 
     win.loadFile(path.join(__dirname, 'files', 'index.html'));
 
