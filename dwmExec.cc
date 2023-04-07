@@ -1,5 +1,5 @@
 /*
-Copyright 2022 GregVido
+Copyright 2023 GregVido
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,11 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#pragma warning(disable: 4996) // GetVersion() was declared deprecated
+#pragma warning(disable : 4996) // GetVersion() was declared deprecated
 #pragma warning(disable: 4312) // long -> HWND size >
 
-#include <node.h>
+#include <node_api.h>
 #include "dwmExec.h"
+#include <vector>
+#include <string>
+
+#define DWMWA_MICA_EFFECT DWORD(1029)
+#define DWMWA_SYSTEMBACKDROP_TYPE DWORD(38)
+#define DWMWA_USE_IMMERSIVE_DARK_MODE DWORD(20)
+#define DWMWA_WINDOW_CORNER_PREFERENCE DWORD(33)
+#define DWMWA_BORDER_COLOR DWORD(34)
+#define DWMWA_CAPTION_COLOR DWORD(35)
+#define DWMWA_TEXT_COLOR DWORD(36)
 
 DWORD getBuild()
 {
@@ -78,276 +88,348 @@ bool is_light_theme()
   return i == 1;
 }
 
-#define DWMWA_MICA_EFFECT DWORD(1029)
-#define DWMWA_SYSTEMBACKDROP_TYPE DWORD(38)
-#define DWMWA_USE_IMMERSIVE_DARK_MODE DWORD(20)
-#define DWMWA_WINDOW_CORNER_PREFERENCE DWORD(33)
-#define DWMWA_BORDER_COLOR DWORD(34)
-#define DWMWA_CAPTION_COLOR DWORD(35)
-#define DWMWA_TEXT_COLOR DWORD(36)
-
-namespace demo
+namespace micaElectron
 {
 
-  using v8::Exception;
-  using v8::FunctionCallbackInfo;
-  using v8::Isolate;
-  using v8::Local;
-  using v8::Number;
-  using v8::Object;
-  using v8::String;
-  using v8::Value;
-
-  void executeDwm(const FunctionCallbackInfo<Value> &args)
+  napi_value executeDwm(napi_env env, napi_callback_info args)
   {
-    Isolate *isolate = args.GetIsolate();
+    size_t argc;
+    napi_get_cb_info(env, args, &argc, nullptr, nullptr, nullptr);
+
+    napi_value *argv = new napi_value[argc];
+    napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
 
     if (!isWin11())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Mica-Electron work only on Windows 11.").ToLocalChecked()));
-      return;
-    }
+      napi_throw_error(env, nullptr, "Mica-Electron work only on Windows 11.");
 
-    if (args.Length() < 1)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HWND argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (args.Length() < 2)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "PARAMS argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (args.Length() < 3)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "VALUE argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[0]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HWND argument must be an integer.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[1]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "PARAMS argument must be an integer.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[2]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "VALUE argument must be an integer.").ToLocalChecked()));
-      return;
-    }
+    else if (argc < 1)
+      napi_throw_error(env, nullptr, "HWND argument missing.");
 
-    const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
-    const pSetWindowLongA SetWindowLongA = (pSetWindowLongA)GetProcAddress(user32, "SetWindowLongA");
+    else if (argc < 2)
+      napi_throw_error(env, nullptr, "PARAMS argument missing.");
 
-    const HINSTANCE dwmapi = LoadLibrary(TEXT("dwmapi.dll"));
-    const pDwmSetWindowAttribute DwmSetWindowAttribute = (pDwmSetWindowAttribute)GetProcAddress(dwmapi, "DwmSetWindowAttribute");
-    const pDwmExtendFrameIntoClientArea DwmExtendFrameIntoClientArea = (pDwmExtendFrameIntoClientArea)GetProcAddress(dwmapi, "DwmExtendFrameIntoClientArea");
+    else if (argc < 3)
+      napi_throw_error(env, nullptr, "VALUE argument missing.");
 
-    HWND hwnd = (HWND)(long)args[0].As<Number>()->Value();
-    int params = (int)args[1].As<Number>()->Value();
-    int value = (int)args[2].As<Number>()->Value();
-
-    if (params < 5)
+    else
     {
-      bool insider = isInsider();
-      
-      int enable = 0x00;
-      // if dark mod, apply dark effect
-      if (value == 1 /* DARK */ || (value == 5 /* AUTO */ && !is_light_theme()))
-        enable = 0x01;
+      napi_valuetype HWNDType;
+      napi_valuetype ParamsType;
+      napi_valuetype ValueType;
 
-      DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &enable, sizeof(int));
+      napi_typeof(env, argv[0], &HWNDType);
+      napi_typeof(env, argv[1], &ParamsType);
+      napi_typeof(env, argv[2], &ValueType);
 
-      if (insider)
-        DwmSetWindowAttribute(hwnd, DWMWA_SYSTEMBACKDROP_TYPE, &params, sizeof(int));
+      bool isHWNDNumber = HWNDType == napi_number;
+      bool isParamsNumber = ParamsType == napi_number;
+      bool isValueNumber = ValueType == napi_number;
 
-      else if (params > 2)
-      {
-        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "You use old version of windows 11, you have don't have ACRYLIC and MICA_TABBED.").ToLocalChecked()));
-        return;
-      }
+      if (!isHWNDNumber)
+        napi_throw_error(env, nullptr, "HWND argument must be an integer.");
+
+      else if (!isParamsNumber)
+        napi_throw_error(env, nullptr, "PARAMS argument must be an integer.");
+
+      else if (!isValueNumber)
+        napi_throw_error(env, nullptr, "VALUE argument must be an integer.");
+
       else
       {
-        int micaEnable = 0x00;
+        const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
+        const pSetWindowLongA SetWindowLongA = (pSetWindowLongA)GetProcAddress(user32, "SetWindowLongA");
 
-        if (params == 1)
-          micaEnable = 0x02;
+        const HINSTANCE dwmapi = LoadLibrary(TEXT("dwmapi.dll"));
+        const pDwmSetWindowAttribute DwmSetWindowAttribute = (pDwmSetWindowAttribute)GetProcAddress(dwmapi, "DwmSetWindowAttribute");
+        const pDwmExtendFrameIntoClientArea DwmExtendFrameIntoClientArea = (pDwmExtendFrameIntoClientArea)GetProcAddress(dwmapi, "DwmExtendFrameIntoClientArea");
 
-        else if (params == 2)
-          micaEnable = 0x01;
+        int64_t hwnd64;
+        int32_t params32;
+        int32_t value32;
 
-        DwmSetWindowAttribute(hwnd, DWMWA_MICA_EFFECT, &micaEnable, sizeof(int));
+        napi_get_value_int64(env, argv[0], &hwnd64);
+        napi_get_value_int32(env, argv[1], &params32);
+        napi_get_value_int32(env, argv[2], &value32);
+
+        HWND hwnd = (HWND)hwnd64;
+
+        int params = (int)params32;
+        int value = (int)value32;
+
+        if (params < 5)
+        {
+          bool insider = isInsider();
+
+          int enable = 0x00;
+
+          // if dark mod, apply dark effect
+          if (value == 1 /* DARK */ || (value == 5 /* AUTO */ && !is_light_theme()))
+            enable = 0x01;
+
+          DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &enable, sizeof(int));
+
+          if (insider)
+            DwmSetWindowAttribute(hwnd, DWMWA_SYSTEMBACKDROP_TYPE, &params, sizeof(int));
+
+          else if (params > 2)
+          {
+            napi_throw_error(env, nullptr, "You use old version of windows 11, you have don't have ACRYLIC and MICA_TABBED.");
+            return nullptr;
+          }
+          else
+          {
+            int micaEnable = 0x00;
+
+            if (params == 1)
+              micaEnable = 0x02;
+
+            else if (params == 2)
+              micaEnable = 0x01;
+
+            DwmSetWindowAttribute(hwnd, DWMWA_MICA_EFFECT, &micaEnable, sizeof(int));
+          }
+        }
+
+        else if (params == 5)
+          DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, &value, sizeof(int));
+
+        else if (params == 6)
+          DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, &value, sizeof(int));
+
+        else if (params == 7)
+          DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, &value, sizeof(int));
+
+        else if (params == 8)
+          DwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, &value, sizeof(int));
+
+        else if (params == 9 && value == 0)
+          SetWindowLongA(hwnd, -16, 0x004F0000L);
+
+        else if (params == 10 && value == 0)
+        {
+          MARGINS margins = {-1};
+          DwmExtendFrameIntoClientArea(hwnd, &margins);
+        }
+
+        else if (params == 10 && value == 1)
+        {
+          MARGINS margins = {};
+          DwmExtendFrameIntoClientArea(hwnd, &margins);
+        }
+
+        FreeLibrary(dwmapi);
+        FreeLibrary(user32);
       }
     }
 
-    else if (params == 5)
-      DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, &value, sizeof(int));
-
-    else if (params == 6)
-      DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, &value, sizeof(int));
-
-    else if (params == 7)
-      DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, &value, sizeof(int));
-
-    else if (params == 8)
-      DwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, &value, sizeof(int));
-
-    else if (params == 9 && value == 0)
-      SetWindowLongA(hwnd, -16, 0x004F0000L);
-
-    else if (params == 10 && value == 0) {
-      MARGINS margins = {-1};
-      DwmExtendFrameIntoClientArea(hwnd, &margins); 
-    }
-
-    else if (params == 10 && value == 1) {
-      MARGINS margins = {};
-      DwmExtendFrameIntoClientArea(hwnd, &margins); 
-    }
-
-    FreeLibrary(dwmapi);
-    FreeLibrary(user32);
-    args.GetReturnValue().Set(1);
+    return nullptr;
   }
 
-  void executeUser32(const FunctionCallbackInfo<Value> &args)
+  napi_value executeUser32(napi_env env, napi_callback_info args)
   {
-    Isolate *isolate = args.GetIsolate();
+    size_t argc;
+    napi_get_cb_info(env, args, &argc, nullptr, nullptr, nullptr);
 
-    if (args.Length() < 1)
+    napi_value *argv = new napi_value[argc];
+    napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
+
+    if (!isWin11())
+      napi_throw_error(env, nullptr, "Mica-Electron work only on Windows 11.");
+
+    else if (argc < 1)
+      napi_throw_error(env, nullptr, "HWND argument missing.");
+
+    else if (argc < 2)
+      napi_throw_error(env, nullptr, "PARAMS argument missing.");
+
+    else if (argc < 3)
+      napi_throw_error(env, nullptr, "VALUE argument missing.");
+
+    else
     {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HWND argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (args.Length() < 2)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "PARAMS argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (args.Length() < 3)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "VALUE argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[0]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HWND argument must be an integer.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[1]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "PARAMS argument must be an integer.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[2]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "VALUE argument must be an integer.").ToLocalChecked()));
-      return;
+      napi_valuetype HWNDType;
+      napi_valuetype ParamsType;
+      napi_valuetype ValueType;
+
+      napi_typeof(env, argv[0], &HWNDType);
+      napi_typeof(env, argv[1], &ParamsType);
+      napi_typeof(env, argv[2], &ValueType);
+
+      bool isHWNDNumber = HWNDType == napi_number;
+      bool isParamsNumber = ParamsType == napi_number;
+      bool isValueNumber = ValueType == napi_number;
+
+      if (!isHWNDNumber)
+        napi_throw_error(env, nullptr, "HWND argument must be an integer.");
+
+      else if (!isParamsNumber)
+        napi_throw_error(env, nullptr, "PARAMS argument must be an integer.");
+
+      else if (!isValueNumber)
+        napi_throw_error(env, nullptr, "VALUE argument must be an integer.");
+
+      else
+      {
+        const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
+        const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
+
+        int64_t hwnd64;
+        int32_t params32;
+        int32_t value32;
+
+        napi_get_value_int64(env, argv[0], &hwnd64);
+        napi_get_value_int32(env, argv[1], &params32);
+        napi_get_value_int32(env, argv[2], &value32);
+
+        HWND hwnd = (HWND)hwnd64;
+        int params = (int)params32;
+        int value = (int)value32;
+
+        ACCENTPOLICY policy;
+        policy.nAccentState = params;
+        policy.nFlags = 2;
+        policy.nColor = value;
+        policy.nAnimationId = 0;
+
+        WINCOMATTRPDATA data;
+        data.nAttribute = 19;
+        data.pData = &policy;
+        data.ulDataSize = sizeof(policy);
+
+        SetWindowCompositionAttribute(hwnd, &data);
+
+        FreeLibrary(user32);
+      }
     }
 
-    const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
-    const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
-
-    HWND hwnd = (HWND)(long)args[0].As<Number>()->Value();
-    int params = (int)args[1].As<Number>()->Value();
-    int value = (int)args[2].As<Number>()->Value();
-
-    ACCENTPOLICY policy;
-    policy.nAccentState = params;
-    policy.nFlags = 2;
-    policy.nColor = value;
-    policy.nAnimationId = 0;
-
-    WINCOMATTRPDATA data;
-    data.nAttribute = 19;
-    data.pData = &policy;
-    data.ulDataSize = sizeof(policy);
-
-    SetWindowCompositionAttribute(hwnd, &data);
-
-    FreeLibrary(user32);
-    args.GetReturnValue().Set(1);
+    return nullptr;
   }
 
-  void refreshWindow(const FunctionCallbackInfo<Value> &args)
+  napi_value redraw(napi_env env, napi_callback_info args)
   {
-    Isolate *isolate = args.GetIsolate();
+    size_t argc;
+    napi_get_cb_info(env, args, &argc, nullptr, nullptr, nullptr);
 
-    if (args.Length() < 1)
+    napi_value *argv = new napi_value[argc];
+    napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
+
+    if (!isWin11())
+      napi_throw_error(env, nullptr, "Mica-Electron work only on Windows 11.");
+
+    else if (argc < 1)
+      napi_throw_error(env, nullptr, "HWND argument missing.");
+
+    else if (argc < 2)
+      napi_throw_error(env, nullptr, "X argument missing.");
+
+    else if (argc < 3)
+      napi_throw_error(env, nullptr, "Y argument missing.");
+
+    else if (argc < 4)
+      napi_throw_error(env, nullptr, "WIDTH argument missing.");
+
+    else if (argc < 5)
+      napi_throw_error(env, nullptr, "HEIGHT argument missing.");
+
+    else
     {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HWND argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (args.Length() < 2)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "X argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (args.Length() < 3)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Y argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (args.Length() < 4)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "WIDTH argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (args.Length() < 5)
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HEIGHT argument missing.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[0]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HWND argument must be an integer.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[1]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "X argument must be an integer.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[2]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Y argument must be a string.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[3]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "WIDTH argument must be a string.").ToLocalChecked()));
-      return;
-    }
-    else if (!args[4]->IsNumber())
-    {
-      isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "HEIGHT argument must be a string.").ToLocalChecked()));
-      return;
+      napi_valuetype HWNDType;
+      napi_valuetype XType;
+      napi_valuetype YType;
+      napi_valuetype WidthType;
+      napi_valuetype HeightType;
+
+      napi_typeof(env, argv[0], &HWNDType);
+      napi_typeof(env, argv[1], &XType);
+      napi_typeof(env, argv[2], &YType);
+      napi_typeof(env, argv[3], &WidthType);
+      napi_typeof(env, argv[4], &HeightType);
+
+      bool isHWNDNumber = HWNDType == napi_number;
+      bool isXNumber = XType == napi_number;
+      bool isYNumber = YType == napi_number;
+      bool isWidthNumber = WidthType == napi_number;
+      bool isHeightNumber = HeightType == napi_number;
+
+      if (!isHWNDNumber)
+        napi_throw_error(env, nullptr, "HWND argument must be an integer.");
+
+      else if (!isXNumber)
+        napi_throw_error(env, nullptr, "X argument must be an integer.");
+
+      else if (!isYNumber)
+        napi_throw_error(env, nullptr, "Y argument must be an integer.");
+
+      else if (!isWidthNumber)
+        napi_throw_error(env, nullptr, "WIDTH argument must be an integer.");
+
+      else if (!isHeightNumber)
+        napi_throw_error(env, nullptr, "HEIGHT argument must be an integer.");
+
+      else
+      {
+        const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
+        const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
+
+        int64_t hwnd64;
+        int32_t x32;
+        int32_t y32;
+        int32_t width32;
+        int32_t height32;
+
+        napi_get_value_int64(env, argv[0], &hwnd64);
+        napi_get_value_int32(env, argv[1], &x32);
+        napi_get_value_int32(env, argv[2], &y32);
+        napi_get_value_int32(env, argv[3], &width32);
+        napi_get_value_int32(env, argv[4], &height32);
+
+        HWND hwnd = (HWND)hwnd64;
+        int x = (int)x32;
+        int y = (int)y32;
+        int width = (int)width32;
+        int height = (int)height32;
+
+        SetWindowPos(hwnd, 0, x, y, width, height, 0x0020);
+        FreeLibrary(user32);
+      }
     }
 
-    const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
-    const pSetWindowPos SetWindowPos = (pSetWindowPos)GetProcAddress(user32, "SetWindowPos");
-
-    HWND hwnd = (HWND)(long)args[0].As<Number>()->Value();
-    int x = (int)args[1].As<Number>()->Value();
-    int y = (int)args[2].As<Number>()->Value();
-    int width = (int)args[3].As<Number>()->Value();
-    int height = (int)args[4].As<Number>()->Value();
-
-    SetWindowPos(hwnd, 0, x, y, width, height, 0x0020);
-
-    FreeLibrary(user32);
-    args.GetReturnValue().Set(1);
+    return nullptr;
   }
 
-  void Initialize(Local<Object> exports)
+  napi_value init(napi_env env, napi_value exports)
   {
-    NODE_SET_METHOD(exports, "executeDwm", executeDwm);
-    NODE_SET_METHOD(exports, "redraw", refreshWindow);
-    NODE_SET_METHOD(exports, "executeUser32", executeUser32);
+    napi_status status;
+    napi_value fn1;
+    napi_value fn2;
+    napi_value fn3;
+
+    status = napi_create_function(env, nullptr, 0, executeDwm, nullptr, &fn1);
+    if (status != napi_ok)
+      return nullptr;
+
+    status = napi_set_named_property(env, exports, "executeDwm", fn1);
+    if (status != napi_ok)
+      return nullptr;
+
+    status = napi_create_function(env, nullptr, 0, executeUser32, nullptr, &fn2);
+    if (status != napi_ok)
+      return nullptr;
+
+    status = napi_set_named_property(env, exports, "executeUser32", fn2);
+    if (status != napi_ok)
+      return nullptr;
+
+    status = napi_create_function(env, nullptr, 0, redraw, nullptr, &fn3);
+    if (status != napi_ok)
+      return nullptr;
+
+    status = napi_set_named_property(env, exports, "redraw", fn3);
+    if (status != napi_ok)
+      return nullptr;
+
+    return exports;
   }
 
-  NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize)
+  NAPI_MODULE(NODE_GYP_MODULE_NAME, init)
 }

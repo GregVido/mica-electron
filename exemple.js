@@ -7,7 +7,7 @@ app.on('ready', () => {
         width: 800,
         height: 600,
         autoHideMenuBar: true,
-        show: true,
+        show: false,
         // frame: false, // -> now work, you can remove the frame properly !!
         webPreferences: {
             nodeIntegration: true,
