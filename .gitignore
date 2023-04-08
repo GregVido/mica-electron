@@ -2,4 +2,3 @@ node_modules
 .vscode
 bin
 build/**
-!build/Release/micaElectron.node

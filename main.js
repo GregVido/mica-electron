@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 const electron = require('electron');
-const { executeDwm, redraw, executeUser32 } = require('./build/Release/micaElectron');
+const { executeDwm, redraw, executeUser32 } = require('./src/micaElectron_' + process.arch);
 const os = require('os');
 
 electron.app.commandLine.appendSwitch("enable-transparent-visuals");
