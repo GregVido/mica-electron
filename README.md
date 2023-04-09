@@ -1,6 +1,6 @@
 <h1 align=center>Mica Electron</h1>
 <div align=center>
-<img src="https://micadiscord.com/img/preview/img.png" name="exemple">
+<img src="https://micadiscord.com/img/preview/title.png" name="exemple">
 
 <b>Mica Electron</b> is a tool to add mica effect on electron app.<br>
 This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.<br>

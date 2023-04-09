@@ -136,6 +136,9 @@ class BrowserWindow extends electron.BrowserWindow {
     /** @type {Boolean} */
     useDWM = false;
 
+    /** @type {Boolean} */
+    hasFrameless = false;
+
     /**
      * Create electron BrowserWindow with mica effect features
      * @param  {...Object} args 
@@ -151,7 +154,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
         super(...args);
 
-        const needDeleteframe = args[0].frame === false || args[0].titleBarStyle == 'hidden';
+        this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
 
         let applyEffect = () => {
             if (args.length > 0 && this.useDWM) {
@@ -184,7 +187,7 @@ class BrowserWindow extends electron.BrowserWindow {
         });
 
         this.on('resize', () => {
-            if (needDeleteframe)
+            if (this.hasFrameless)
                 setTimeout(applyEffect, 60); // refresh effect
         });
     }
@@ -208,14 +211,18 @@ class BrowserWindow extends electron.BrowserWindow {
         if (this.marginTimer)
             clearInterval(this.marginTimer);
 
-        this.marginTimer = setInterval(() => {
-            try {
-                this.executeDwm(PARAMS.MARGIN, 0);
-            } catch (e) {
-                clearInterval(this.marginTimer);
-                this.marginTimer = null;
-            }
-        }, 1);
+        if (!this.hasFrameless)
+            this.executeDwm(PARAMS.MARGIN, 0);
+
+        else
+            this.marginTimer = setInterval(() => {
+                try {
+                    this.executeDwm(PARAMS.MARGIN, 0);
+                } catch (e) {
+                    clearInterval(this.marginTimer);
+                    this.marginTimer = null;
+                }
+            }, 1);
     }
 
     /**
