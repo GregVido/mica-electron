@@ -5,6 +5,8 @@ echo MicaElectron builder v1.0
 echo -------------------------
 echo.
 
+ren data binding.gyp
+
 echo -------------------------
 echo Reset src folders
 rmdir /s /q src
@@ -35,3 +37,5 @@ echo -------------------------
 echo Delete build folder
 rmdir /s /q build
 echo -------------------------
+
+ren binding.gyp data

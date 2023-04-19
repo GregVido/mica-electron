@@ -145,7 +145,7 @@ Now you can compile `mica-electron`:
 
 ``` bash
 $ cd .\node_modules\mica-electron\
-$ node-gyp rebuild
+$ ./build.bat
 ```
 ## Objects details
 <details>
