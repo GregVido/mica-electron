@@ -15,8 +15,25 @@ limitations under the License.
 */
 
 const electron = require('electron');
-const { executeDwm, redraw, executeUser32 } = require('./src/micaElectron_' + process.arch);
 const os = require('os');
+const fs = require('fs');
+
+const filepath = './src/micaElectron_' + process.arch;
+
+let executeDwm, redraw, executeUser32;
+
+if (fs.existsSync(filepath + '.node')) {
+    const micaBuild = require('./src/micaElectron_' + process.arch);
+
+    executeDwm = micaBuild.executeDwm;
+    redraw = micaBuild.redraw;
+    executeUser32 = micaBuild.executeUser32;
+}
+
+else {
+    console.log('./src/micaElectron_' + process.arch + '.node does not exist!');
+    console.log('Mica-Electron: Disabled');
+}
 
 electron.app.commandLine.appendSwitch("enable-transparent-visuals");
 
@@ -36,12 +53,14 @@ function isWin11() {
  * @param  {BrowserWindow} window Target to remove frame
  */
 function removeFrame(window) {
-    const HWND = window.getNativeWindowHandle()["readInt32LE"]();
+    if (redraw) {
+        const HWND = window.getNativeWindowHandle()["readInt32LE"]();
 
-    const bounds = window.getBounds();
+        const bounds = window.getBounds();
 
-    // executeDwm(HWND, PARAMS.FRAME, VALUE.FALSE);
-    redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height);
+        // executeDwm(HWND, PARAMS.FRAME, VALUE.FALSE);
+        redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height);
+    }
 }
 
 const PARAMS = {
@@ -386,12 +405,14 @@ class BrowserWindow extends electron.BrowserWindow {
      * @param  {Number} value New value for the params
      */
     executeDwm(params, value) {
-        const HWND = this.getNativeWindowHandle()["readInt32LE"]();
-        executeDwm(HWND, params, value);
+        if (executeDwm) {
+            const HWND = this.getNativeWindowHandle()["readInt32LE"]();
+            executeDwm(HWND, params, value);
 
-        if (params >= 0 && params <= 4) {
-            this.effect = params;
-            this.theme = value;
+            if (params >= 0 && params <= 4) {
+                this.effect = params;
+                this.theme = value;
+            }
         }
     }
 
@@ -401,8 +422,10 @@ class BrowserWindow extends electron.BrowserWindow {
      * @param  {Number} value New value for the params
      */
     executeUser32(params, value) {
-        const HWND = this.getNativeWindowHandle()["readInt32LE"]();
-        executeUser32(HWND, params, value);
+        if (executeUser32) {
+            const HWND = this.getNativeWindowHandle()["readInt32LE"]();
+            executeUser32(HWND, params, value);
+        }
     }
 
 }
