@@ -23,11 +23,18 @@ const filepath = './src/micaElectron_' + process.arch;
 let executeDwm, redraw, executeUser32;
 
 if (fs.existsSync(filepath + '.node')) {
-    const micaBuild = require('./src/micaElectron_' + process.arch);
+    /* If mica-electron is running on windows */
+    if (process.platform == 'win32') {
+        const micaBuild = require('./src/micaElectron_' + process.arch);
 
-    executeDwm = micaBuild.executeDwm;
-    redraw = micaBuild.redraw;
-    executeUser32 = micaBuild.executeUser32;
+        executeDwm = micaBuild.executeDwm;
+        redraw = micaBuild.redraw;
+        executeUser32 = micaBuild.executeUser32;
+    }
+    else {
+        console.log('Mica-Electron only works on Windows!');
+        console.log('Mica-Electron: Disabled');
+    }
 }
 
 else {
