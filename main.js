@@ -17,8 +17,9 @@ limitations under the License.
 const electron = require('electron');
 const os = require('os');
 const fs = require('fs');
+const path = require('path');
 
-const filepath = './src/micaElectron_' + process.arch;
+const filepath = path.join(__dirname, 'src', '/micaElectron_' + process.arch);
 
 let executeDwm, redraw, executeUser32;
 
