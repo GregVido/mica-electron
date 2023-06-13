@@ -1,8 +1,9 @@
 {
   "name": "mica-electron",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Tool to add mica effect of windows 11 in electron app",
   "main": "main.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
