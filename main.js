@@ -26,7 +26,7 @@ let executeDwm, redraw, executeUser32;
 if (fs.existsSync(filepath + '.node')) {
     /* If mica-electron is running on windows */
     if (process.platform == 'win32') {
-        const micaBuild = require('./src/micaElectron_' + process.arch);
+        const micaBuild = require(filepath);
 
         executeDwm = micaBuild.executeDwm;
         redraw = micaBuild.redraw;
