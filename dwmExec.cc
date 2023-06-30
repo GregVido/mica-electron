@@ -233,9 +233,6 @@ namespace micaElectron
     napi_value *argv = new napi_value[argc];
     napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
 
-    if (!isWin11())
-      napi_throw_error(env, nullptr, "Mica-Electron work only on Windows 11.");
-
     else if (argc < 1)
       napi_throw_error(env, nullptr, "HWND argument missing.");
 
