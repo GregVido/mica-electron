@@ -1,12 +1,12 @@
-declare module "mica-electron" {
-    import { BrowserWindow } from "electron";
+import "electron";
 
+declare module "mica-electron" {
     // TODO: rework CSS colors
     // type HexColor = `#${string}`;
     // type RGBColor = `rgb(${number}, ${number}, ${number})`;
     // type CSSColor = string;
 
-    export class MicaBrowserWindow extends BrowserWindow {
+    export class MicaBrowserWindow extends Electron.BrowserWindow {
         /**
          * Current theme value, represented by an integer
          */
