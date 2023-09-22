@@ -151,6 +151,13 @@ let getColorByString = (str) => {
 
         return VALUE.COLOR.FROM_RGB(r, g, b);
     }
+    else if (str.length == 8) { // color from getAccentColor()
+        const r = parseInt(str.slice(0, 2), 16);
+        const g = parseInt(str.slice(2, 4), 16);
+        const b = parseInt(str.slice(4, 6), 16);
+
+        return VALUE.COLOR.FROM_RGB(r, g, b);
+    }
 }
 
 class BrowserWindow extends electron.BrowserWindow {
