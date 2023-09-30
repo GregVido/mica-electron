@@ -19,6 +19,8 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
+const IS_ELECTRON_BETA = process.versions.electron > '27.0.0';
+
 const filepath = path.join(__dirname, 'src', '/micaElectron_' + process.arch);
 
 let executeDwm, redraw, executeUser32;
@@ -186,6 +188,9 @@ class BrowserWindow extends electron.BrowserWindow {
                 backgroundColor: '#00ffffff'
             });
 
+        if (IS_ELECTRON_BETA)
+            args[0].transparent = true;
+
         super(...args);
 
         this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
@@ -206,6 +211,8 @@ class BrowserWindow extends electron.BrowserWindow {
 
                 setTimeout(() => {
                     this.hide();
+                    if (IS_ELECTRON_BETA)
+                        this.enableResize();
                     removeFrame(this);
                     this.show();
                 }, 60);
@@ -224,6 +231,14 @@ class BrowserWindow extends electron.BrowserWindow {
             if (this.hasFrameless)
                 setTimeout(applyEffect, 60); // refresh effect
         });
+
+    }
+
+    /**
+     * Enable resize for the window 
+     */
+    enableResize() {
+        this.executeDwm(PARAMS.FRAME, 1);
     }
 
     /**

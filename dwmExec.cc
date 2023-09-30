@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 #pragma warning(disable : 4996) // GetVersion() was declared deprecated
-#pragma warning(disable: 4312) // long -> HWND size >
+#pragma warning(disable : 4312) // long -> HWND size >
 
 #include <node_api.h>
 #include "dwmExec.h"
@@ -138,6 +138,7 @@ namespace micaElectron
       {
         const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
         const pSetWindowLongA SetWindowLongA = (pSetWindowLongA)GetProcAddress(user32, "SetWindowLongA");
+        const pGetWindowLongA GetWindowLongA = (pGetWindowLongA)GetProcAddress(user32, "GetWindowLongA");
 
         const HINSTANCE dwmapi = LoadLibrary(TEXT("dwmapi.dll"));
         const pDwmSetWindowAttribute DwmSetWindowAttribute = (pDwmSetWindowAttribute)GetProcAddress(dwmapi, "DwmSetWindowAttribute");
@@ -204,6 +205,17 @@ namespace micaElectron
 
         else if (params == 9 && value == 0)
           SetWindowLongA(hwnd, -16, 0x004F0000L);
+
+        else if (params == 9 && value == 1)
+        {
+          LONG_PTR style = GetWindowLongA(hwnd, GWL_STYLE);
+
+          style |= WS_SIZEBOX;
+          style |= WS_THICKFRAME;
+          style |= WS_MAXIMIZEBOX;
+
+          SetWindowLongA(hwnd, -16, style);
+        }
 
         else if (params == 10 && value == 0)
         {
