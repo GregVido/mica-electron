@@ -188,8 +188,10 @@ class BrowserWindow extends electron.BrowserWindow {
                 backgroundColor: '#00ffffff'
             });
 
+
         if (IS_ELECTRON_BETA)
             args[0].transparent = true;
+
 
         super(...args);
 
@@ -211,8 +213,10 @@ class BrowserWindow extends electron.BrowserWindow {
 
                 setTimeout(() => {
                     this.hide();
-                    if (IS_ELECTRON_BETA)
-                        this.enableResize();
+                    if (IS_ELECTRON_BETA) {
+                        this.interceptMessage();
+                        this.applyStyle();
+                    }
                     removeFrame(this);
                     this.show();
                 }, 60);
@@ -235,10 +239,17 @@ class BrowserWindow extends electron.BrowserWindow {
     }
 
     /**
-     * Enable resize for the window 
+     * Enable resize/maximize for the window 
      */
-    enableResize() {
+    applyStyle() {
         this.executeDwm(PARAMS.FRAME, 1);
+    }
+
+    /**
+     * Restore the full screen action
+     */
+    interceptMessage() {
+        this.executeDwm(PARAMS.FRAME, 2);
     }
 
     /**

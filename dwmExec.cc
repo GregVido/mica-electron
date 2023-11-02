@@ -30,6 +30,20 @@ limitations under the License.
 #define DWMWA_CAPTION_COLOR DWORD(35)
 #define DWMWA_TEXT_COLOR DWORD(36)
 
+WNDPROC originalWndProc;
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  switch (uMsg)
+  {
+  case WM_SYSCOMMAND:
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+
+  default:
+    return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
+  }
+}
+
 DWORD getBuild()
 {
   DWORD dwVersion = 0;
@@ -208,13 +222,20 @@ namespace micaElectron
 
         else if (params == 9 && value == 1)
         {
+
           LONG_PTR style = GetWindowLongA(hwnd, GWL_STYLE);
 
           style |= WS_SIZEBOX;
           style |= WS_THICKFRAME;
           style |= WS_MAXIMIZEBOX;
 
-          SetWindowLongA(hwnd, -16, style);
+          SetWindowLongA(hwnd, GWL_STYLE, style);
+        }
+
+        else if (params == 9 && value == 2)
+        {
+          originalWndProc = (WNDPROC)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+          SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
         }
 
         else if (params == 10 && value == 0)
