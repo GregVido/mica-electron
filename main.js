@@ -58,6 +58,8 @@ function isWin11() {
     return false;
 }
 
+const WINDOWS_11 = isWin11();
+
 /**
  * Remove a frame from a window
  * @param  {BrowserWindow} window Target to remove frame
@@ -388,7 +390,8 @@ class BrowserWindow extends electron.BrowserWindow {
     * Apply transparent Effect (windows 7+)
     */
     setTransparent() {
-        this.disableDWM();
+        if (WINDOWS_11)
+            this.disableDWM();
         this.executeUser32(WIN10.TRANSPARENT, 0x00ffffff);
     }
 
@@ -396,7 +399,8 @@ class BrowserWindow extends electron.BrowserWindow {
     * Apply blur Effect (windows 7+)
     */
     setBlur() {
-        this.disableDWM();
+        if (WINDOWS_11)
+            this.disableDWM();
         this.executeUser32(WIN10.BLURBEHIND, 0x00ffffff);
     }
 
@@ -404,7 +408,8 @@ class BrowserWindow extends electron.BrowserWindow {
     * Apply Acrylic Effect (windows 7+)
     */
     setAcrylic() {
-        this.disableDWM();
+        if (WINDOWS_11)
+            this.disableDWM();
         this.executeUser32(WIN10.ACRYLIC, 0x00909090);
     }
 
@@ -475,6 +480,6 @@ module.exports = {
     PARAMS: PARAMS,
     VALUE: VALUE,
     MicaBrowserWindow: BrowserWindow,
-    IS_WINDOWS_11: isWin11(),
+    IS_WINDOWS_11: WINDOWS_11,
     WIN10: WIN10
 };
