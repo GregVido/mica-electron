@@ -364,8 +364,12 @@ class BrowserWindow extends electron.BrowserWindow {
     * @param  {String} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setBorderColor(color) {
-        color = getColorByString(color);
-        this.executeDwm(PARAMS.BORDER_COLOR, color);
+        if (color != null) {
+            color = getColorByString(color);
+            this.executeDwm(PARAMS.BORDER_COLOR, color);
+        }
+        else
+            this.executeDwm(PARAMS.BORDER_COLOR, 0xFFFFFFFF);
     }
 
     /**
@@ -373,8 +377,12 @@ class BrowserWindow extends electron.BrowserWindow {
     * @param  {String} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setCaptionColor(color) {
-        color = getColorByString(color);
-        this.executeDwm(PARAMS.CAPTION_COLOR, color);
+        if (color != null) {
+            color = getColorByString(color);
+            this.executeDwm(PARAMS.CAPTION_COLOR, color);
+        }
+        else
+            this.executeDwm(PARAMS.CAPTION_COLOR, 0xFFFFFFFF);
     }
 
     /**
@@ -382,8 +390,12 @@ class BrowserWindow extends electron.BrowserWindow {
     * @param  {String} color HTML color (#RRGGBB, #RGB, or rgb(r, g, b))
     */
     setTitleTextColor(color) {
-        color = getColorByString(color);
-        this.executeDwm(PARAMS.TEXT_COLOR, color);
+        if (color != null) {
+            color = getColorByString(color);
+            this.executeDwm(PARAMS.TEXT_COLOR, color);
+        }
+        else
+            this.executeDwm(PARAMS.TEXT_COLOR, 0xFFFFFFFF);
     }
 
     /**

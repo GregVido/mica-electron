@@ -108,8 +108,13 @@ win.setSquareCorner();	      // Square
 
 ```js
 win.setBorderColor('#f40b0b');  // Border color
+win.setBorderColor(null); // -> disable effect
+
 win.setCaptionColor('#262626'); // Background titlebar color
+win.setCaptionColor(null); // -> disable effect
+
 win.setTitleTextColor('#fff');  // Title text color
+win.setTitleTextColor(null); // -> disable effect
 ```
 <div align=center>
 <img src="https://micadiscord.com/img/preview/border.png" name="border" width="50%">

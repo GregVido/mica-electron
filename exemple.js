@@ -16,7 +16,7 @@ app.on('ready', () => {
     });
 
     win.setLightTheme();
-
+    
     if (IS_WINDOWS_11)
         win.setMicaTabbedEffect();
 
