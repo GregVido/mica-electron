@@ -190,11 +190,6 @@ class BrowserWindow extends electron.BrowserWindow {
                 backgroundColor: '#00ffffff'
             });
 
-
-        if (IS_ELECTRON_BETA)
-            args[0].transparent = true;
-
-
         super(...args);
 
         this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
