@@ -17,11 +17,13 @@ app.on('ready', () => {
 
     win.setLightTheme();
     
+    
     if (IS_WINDOWS_11)
         win.setMicaTabbedEffect();
 
     else
         win.setCustomEffect(WIN10.ACRYLIC, '#401896', .2);
+
 
     win.loadFile(path.join(__dirname, 'files', 'index.html'));
 

@@ -199,27 +199,29 @@ class BrowserWindow extends electron.BrowserWindow {
 
         this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
 
+        /*
         let applyEffect = () => {
             if (args.length > 0 && this.useDWM) {
                 this.executeDwm(this.effect, this.theme);
             }
-        }
+        }*/
 
         let frameRemoved = true;
 
         let onWindowShow = () => {
-            applyEffect();
+            //applyEffect();
 
             if (frameRemoved) {
                 frameRemoved = false;
 
                 setTimeout(() => {
                     this.hide();
+                    
                     if (IS_ELECTRON_BETA) {
                         this.interceptMessage();
                         this.applyStyle();
                     }
-                    removeFrame(this);
+                    //removeFrame(this);
                     this.show();
                 }, 60);
             }

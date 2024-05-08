@@ -34,13 +34,36 @@ WNDPROC originalWndProc;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+
   switch (uMsg)
   {
+
   case WM_SYSCOMMAND:
+  case WM_SIZE:
+    /*
+    case WM_SETREDRAW:
+    case WM_PAINT:
+    case WM_DRAWITEM:
+    case WM_MDIMAXIMIZE:
+    case WM_SYNCPAINT:
+    case WM_STYLECHANGED:
+    case WM_STYLECHANGING:
+    case WM_GETMINMAXINFO:
+    case WM_NCPAINT:
+    case WM_NCACTIVATE:
+    case WM_NCCALCSIZE:
+    case WM_DWMWINDOWMAXIMIZEDCHANGE:
+    // case WM_SIZE:
+    // case WM_SIZING:
+    case WM_MOVE:
+    // case WM_WINDOWPOSCHANGED: // important
+    */
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    // return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
 
   default:
     return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
+    // return DefWindowProc(hwnd, uMsg, wParam, lParam);
   }
 }
 
@@ -236,6 +259,27 @@ namespace micaElectron
         {
           originalWndProc = (WNDPROC)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
           SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
+        }
+
+        else if (params == 9 && value == 3)
+        {
+          LONG_PTR style = GetWindowLongA(hwnd, GWL_STYLE);
+          style &= ~WS_CAPTION;
+          SetWindowLongA(hwnd, GWL_STYLE, style);
+        }
+
+        else if (params == 9 && value == 4)
+        {
+          LONG_PTR style = GetWindowLongA(hwnd, GWL_STYLE);
+          style |= WS_CAPTION;
+          SetWindowLongA(hwnd, GWL_STYLE, style);
+        }
+
+        else if (params == 9 && value == 5)
+        {
+          LONG_PTR style = WS_OVERLAPPEDWINDOW;
+          SetWindowLongA(hwnd, GWL_STYLE, style);
+          SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
         }
 
         else if (params == 10 && value == 0)
