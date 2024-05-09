@@ -18,112 +18,13 @@ limitations under the License.
 #pragma warning(disable : 4312) // long -> HWND size >
 
 #include <node_api.h>
-#include "dwmExec.h"
-#include <vector>
-#include <string>
 
-#define DWMWA_MICA_EFFECT DWORD(1029)
-#define DWMWA_SYSTEMBACKDROP_TYPE DWORD(38)
-#define DWMWA_USE_IMMERSIVE_DARK_MODE DWORD(20)
-#define DWMWA_WINDOW_CORNER_PREFERENCE DWORD(33)
-#define DWMWA_BORDER_COLOR DWORD(34)
-#define DWMWA_CAPTION_COLOR DWORD(35)
-#define DWMWA_TEXT_COLOR DWORD(36)
+#include "assets/win.cpp"
+#include "assets/winstyle.h"
+#include "assets/dwm.cpp"
+#include "assets/user32.cpp"
 
-WNDPROC originalWndProc;
-
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-
-  switch (uMsg)
-  {
-
-  case WM_SYSCOMMAND:
-  case WM_SIZE:
-    /*
-    case WM_SETREDRAW:
-    case WM_PAINT:
-    case WM_DRAWITEM:
-    case WM_MDIMAXIMIZE:
-    case WM_SYNCPAINT:
-    case WM_STYLECHANGED:
-    case WM_STYLECHANGING:
-    case WM_GETMINMAXINFO:
-    case WM_NCPAINT:
-    case WM_NCACTIVATE:
-    case WM_NCCALCSIZE:
-    case WM_DWMWINDOWMAXIMIZEDCHANGE:
-    // case WM_SIZE:
-    // case WM_SIZING:
-    case WM_MOVE:
-    // case WM_WINDOWPOSCHANGED: // important
-    */
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
-    // return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
-
-  default:
-    return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
-    // return DefWindowProc(hwnd, uMsg, wParam, lParam);
-  }
-}
-
-DWORD getBuild()
-{
-  DWORD dwVersion = 0;
-  DWORD dwMajorVersion = 0;
-  DWORD dwMinorVersion = 0;
-  DWORD dwBuild = 0;
-
-  dwVersion = GetVersion();
-
-  dwMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
-  dwMinorVersion = (DWORD)(HIBYTE(LOWORD(dwVersion)));
-
-  if (dwVersion < 0x80000000)
-    dwBuild = (DWORD)(HIWORD(dwVersion));
-
-  return dwBuild;
-}
-
-bool isInsider()
-{
-  return getBuild() >= 22621;
-}
-
-bool isWin11()
-{
-  return getBuild() >= 22000;
-}
-
-bool is_light_theme()
-{
-  // based on https://stackoverflow.com/questions/51334674/how-to-detect-windows-10-light-dark-mode-in-win32-application
-
-  // The value is expected to be a REG_DWORD, which is a signed 32-bit little-endian
-  auto buffer = std::vector<char>(4);
-  auto cbData = static_cast<DWORD>(buffer.size() * sizeof(char));
-  auto res = RegGetValueW(
-      HKEY_CURRENT_USER,
-      L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-      L"AppsUseLightTheme",
-      RRF_RT_REG_DWORD, // expected value type
-      nullptr,
-      buffer.data(),
-      &cbData);
-
-  if (res != ERROR_SUCCESS)
-  {
-    throw std::runtime_error("Error: error_code=" + std::to_string(res));
-  }
-
-  // convert bytes written to our buffer to an int, assuming little-endian
-  auto i = int(buffer[3] << 24 |
-               buffer[2] << 16 |
-               buffer[1] << 8 |
-               buffer[0]);
-
-  return i == 1;
-}
+#include "assets/types.h"
 
 namespace micaElectron
 {
@@ -173,14 +74,6 @@ namespace micaElectron
 
       else
       {
-        const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
-        const pSetWindowLongA SetWindowLongA = (pSetWindowLongA)GetProcAddress(user32, "SetWindowLongA");
-        const pGetWindowLongA GetWindowLongA = (pGetWindowLongA)GetProcAddress(user32, "GetWindowLongA");
-
-        const HINSTANCE dwmapi = LoadLibrary(TEXT("dwmapi.dll"));
-        const pDwmSetWindowAttribute DwmSetWindowAttribute = (pDwmSetWindowAttribute)GetProcAddress(dwmapi, "DwmSetWindowAttribute");
-        const pDwmExtendFrameIntoClientArea DwmExtendFrameIntoClientArea = (pDwmExtendFrameIntoClientArea)GetProcAddress(dwmapi, "DwmExtendFrameIntoClientArea");
-
         int64_t hwnd64;
         int32_t params32;
         int32_t value32;
@@ -194,108 +87,68 @@ namespace micaElectron
         int params = (int)params32;
         int value = (int)value32;
 
-        if (params < 5)
+        enableDWM();
+
+        if (params <= MICA_EFFECT)
         {
-          bool insider = isInsider();
+          setAppTheme(value, hwnd);
+          bool success = applyMicaEffect(params, hwnd);
 
-          int enable = 0x00;
-
-          // if dark mod, apply dark effect
-          if (value == 1 /* DARK */ || (value == 5 /* AUTO */ && !is_light_theme()))
-            enable = 0x01;
-
-          DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &enable, sizeof(int));
-
-          if (insider)
-            DwmSetWindowAttribute(hwnd, DWMWA_SYSTEMBACKDROP_TYPE, &params, sizeof(int));
-
-          else if (params > 2)
+          if (!success)
           {
             napi_throw_error(env, nullptr, "You use old version of windows 11, you have don't have ACRYLIC and MICA_TABBED.");
             return nullptr;
           }
-          else
+        }
+
+        else
+        {
+          switch (params)
           {
-            int micaEnable = 0x00;
 
-            if (params == 1)
-              micaEnable = 0x02;
+          case CORNER_TYPE:
+            setCorner(value, hwnd);
+            break;
 
-            else if (params == 2)
-              micaEnable = 0x01;
+          case BORDER_COLOR:
+            setBorderColor(value, hwnd);
+            break;
 
-            DwmSetWindowAttribute(hwnd, DWMWA_MICA_EFFECT, &micaEnable, sizeof(int));
+          case CAPTION_COLOR:
+            setCaptionColor(value, hwnd);
+            break;
+
+          case TEXT_COLOR:
+            setTextColor(value, hwnd);
+            break;
+
+          case WINDOW_EDIT:
+            if (value == RESET_BORDER)
+              resetBorderApp(hwnd);
+
+            else if (value == ENABLE_MAXIMIZE)
+              enableMaximizeBox(hwnd);
+
+            else if (value == INTERCEPT_MSG)
+              interceptMessage(hwnd);
+
+            else if (value == ENABLE_CAPTION)
+              disableCaption(hwnd);
+
+            else if (value == DISABLE_CAPTION)
+              enableCaption(hwnd);
+            break;
+
+          case MARGIN_TYPE:
+            setMargin(value, hwnd);
+            break;
+
+          default:
+            break;
           }
         }
 
-        else if (params == 5)
-          DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, &value, sizeof(int));
-
-        else if (params == 6)
-          DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, &value, sizeof(int));
-
-        else if (params == 7)
-          DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, &value, sizeof(int));
-
-        else if (params == 8)
-          DwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, &value, sizeof(int));
-
-        else if (params == 9 && value == 0)
-          SetWindowLongA(hwnd, -16, 0x004F0000L);
-
-        else if (params == 9 && value == 1)
-        {
-
-          LONG_PTR style = GetWindowLongA(hwnd, GWL_STYLE);
-
-          style |= WS_SIZEBOX;
-          style |= WS_THICKFRAME;
-          style |= WS_MAXIMIZEBOX;
-
-          SetWindowLongA(hwnd, GWL_STYLE, style);
-        }
-
-        else if (params == 9 && value == 2)
-        {
-          originalWndProc = (WNDPROC)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
-          SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
-        }
-
-        else if (params == 9 && value == 3)
-        {
-          LONG_PTR style = GetWindowLongA(hwnd, GWL_STYLE);
-          style &= ~WS_CAPTION;
-          SetWindowLongA(hwnd, GWL_STYLE, style);
-        }
-
-        else if (params == 9 && value == 4)
-        {
-          LONG_PTR style = GetWindowLongA(hwnd, GWL_STYLE);
-          style |= WS_CAPTION;
-          SetWindowLongA(hwnd, GWL_STYLE, style);
-        }
-
-        else if (params == 9 && value == 5)
-        {
-          LONG_PTR style = WS_OVERLAPPEDWINDOW;
-          SetWindowLongA(hwnd, GWL_STYLE, style);
-          SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-        }
-
-        else if (params == 10 && value == 0)
-        {
-          MARGINS margins = {-1};
-          DwmExtendFrameIntoClientArea(hwnd, &margins);
-        }
-
-        else if (params == 10 && value == 1)
-        {
-          MARGINS margins = {};
-          DwmExtendFrameIntoClientArea(hwnd, &margins);
-        }
-
-        FreeLibrary(dwmapi);
-        FreeLibrary(user32);
+        disableDWM();
       }
     }
 
@@ -344,8 +197,6 @@ namespace micaElectron
 
       else
       {
-        const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
-        const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
 
         int64_t hwnd64;
         int32_t params32;
@@ -355,24 +206,14 @@ namespace micaElectron
         napi_get_value_int32(env, argv[1], &params32);
         napi_get_value_int32(env, argv[2], &value32);
 
+        enableUser32();
+
         HWND hwnd = (HWND)hwnd64;
         int params = (int)params32;
         int value = (int)value32;
 
-        ACCENTPOLICY policy;
-        policy.nAccentState = params;
-        policy.nFlags = 2;
-        policy.nColor = value;
-        policy.nAnimationId = 0;
-
-        WINCOMATTRPDATA data;
-        data.nAttribute = 19;
-        data.pData = &policy;
-        data.ulDataSize = sizeof(policy);
-
-        SetWindowCompositionAttribute(hwnd, &data);
-
-        FreeLibrary(user32);
+        applyWindows10Effect(params, value, hwnd);
+        disableUser32();
       }
     }
 
@@ -439,8 +280,6 @@ namespace micaElectron
 
       else
       {
-        const HINSTANCE user32 = LoadLibrary(TEXT("user32.dll"));
-        const pSetWindowCompositionAttribute SetWindowCompositionAttribute = (pSetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
 
         int64_t hwnd64;
         int32_t x32;
@@ -461,7 +300,6 @@ namespace micaElectron
         int height = (int)height32;
 
         SetWindowPos(hwnd, 0, x, y, width, height, 0x0020);
-        FreeLibrary(user32);
       }
     }
 

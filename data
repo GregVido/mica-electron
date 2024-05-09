@@ -2,7 +2,7 @@
   "targets": [
     {
       "target_name": "micaElectron",
-      "sources": [ "dwmExec.cc" ]
+      "sources": [ "module/app.cpp" ]
     }
   ],
   'variables':{

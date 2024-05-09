@@ -1,5 +1,7 @@
 #include <dwmapi.h>
-#include <iostream>
+
+#ifndef WIN_STYLE_H
+#define WIN_STYLE_H
 
 struct ACCENTPOLICY
 {
@@ -25,3 +27,5 @@ typedef BOOL(WINAPI *pDwmExtendFrameIntoClientArea)(HWND, MARGINS *);
 typedef BOOL(WINAPI *pSetWindowPos)(HWND, HWND, int, int, int, int, int);
 typedef HWND(WINAPI *pSetWindowLongA)(HWND, int, long);
 typedef LONG(WINAPI *pGetWindowLongA)(HWND, int);
+
+#endif

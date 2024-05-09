@@ -19,7 +19,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
-const IS_ELECTRON_BETA = process.versions.electron >= '27.0.0';
+const IS_ELECTRON_RECENT_VERSION = process.versions.electron >= '27.0.0';
 
 const filepath = path.join(__dirname, 'src', '/micaElectron_' + process.arch);
 
@@ -64,7 +64,7 @@ const WINDOWS_11 = isWin11();
  * Remove a frame from a window
  * @param  {BrowserWindow} window Target to remove frame
  */
-function removeFrame(window) {
+function redrawFrame(window) {
     if (redraw) {
         const HWND = window.getNativeWindowHandle()["readInt32LE"]();
 
@@ -191,7 +191,7 @@ class BrowserWindow extends electron.BrowserWindow {
             });
 
 
-        if (IS_ELECTRON_BETA)
+        if (IS_ELECTRON_RECENT_VERSION)
             args[0].transparent = true;
 
 
@@ -217,11 +217,14 @@ class BrowserWindow extends electron.BrowserWindow {
                 setTimeout(() => {
                     this.hide();
                     
-                    if (IS_ELECTRON_BETA) {
+                    if (IS_ELECTRON_RECENT_VERSION) {
                         this.interceptMessage();
                         this.applyStyle();
+
+                        if(this.hasFrameless)
+                            this.removeCaption();
                     }
-                    removeFrame(this);
+                    redrawFrame(this);
                     this.show();
                 }, 60);
             }
@@ -254,6 +257,13 @@ class BrowserWindow extends electron.BrowserWindow {
      */
     interceptMessage() {
         this.executeDwm(PARAMS.FRAME, 2);
+    }
+
+    /**
+     * Remove Window Caption
+     */
+    removeCaption() {
+        this.executeDwm(PARAMS.FRAME, 4);
     }
 
     /**
@@ -434,8 +444,10 @@ class BrowserWindow extends electron.BrowserWindow {
      * @param {Number} a Alpha intensity (0 < a < 1)
      */
     setCustomEffect(nAccentState, color, a) {
+        if (WINDOWS_11)
+            this.disableDWM();
+
         a = Math.min(Math.max(Math.round(a * 255), 0), 255);
-        this.disableDWM();
         const colorToInt = getColorByString(color);
         this.executeUser32(nAccentState, (a << 24) + colorToInt);
     }
