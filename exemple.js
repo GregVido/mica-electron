@@ -17,14 +17,13 @@ app.on('ready', () => {
 
     win.setLightTheme();
     
-    
     if (IS_WINDOWS_11)
         win.setMicaTabbedEffect();
 
     else
         win.setCustomEffect(WIN10.ACRYLIC, '#401896', .2);
 
-
+    // win.alwaysFocused(true); // -> allows you to keep the mica effects even if the window is no focus (decrease performance)
     win.loadFile(path.join(__dirname, 'files', 'index.html'));
 
     win.webContents.once('dom-ready', () => {

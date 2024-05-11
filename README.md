@@ -40,6 +40,8 @@ electron.app.on('ready', () => {
     win.setDarkTheme();
     win.setMicaEffect();
 
+    // win.alwaysFocused(true); // -> allows you to keep the mica effects even if the window is no focus (decrease performance)
+
     win.loadFile(path.join(__dirname, 'files', 'index.html'));
 
     win.webContents.once('dom-ready', () => {

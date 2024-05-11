@@ -177,6 +177,12 @@ class BrowserWindow extends electron.BrowserWindow {
     /** @type {Boolean} */
     hasFrameless = false;
 
+    /** @type {Boolean} */
+    forceFocus = false;
+
+    /** @type {Boolean} */
+    hasMargin = false;
+
     /**
      * Create electron BrowserWindow with mica effect features
      * @param  {...Object} args 
@@ -199,7 +205,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
         this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
 
-        
+
         let applyEffect = () => {
             if (args.length > 0 && this.useDWM) {
                 this.executeDwm(this.effect, this.theme);
@@ -216,12 +222,12 @@ class BrowserWindow extends electron.BrowserWindow {
 
                 setTimeout(() => {
                     this.hide();
-                    
+
                     if (IS_ELECTRON_RECENT_VERSION) {
                         this.interceptMessage();
                         this.applyStyle();
 
-                        if(this.hasFrameless)
+                        if (this.hasFrameless)
                             this.removeCaption();
                     }
                     redrawFrame(this);
@@ -276,6 +282,8 @@ class BrowserWindow extends electron.BrowserWindow {
         }
         if (this.useDWM)
             this.executeDwm(PARAMS.MARGIN, 1);
+
+        this.hasMargin = false;
     }
 
     /**
@@ -285,18 +293,35 @@ class BrowserWindow extends electron.BrowserWindow {
         if (this.marginTimer)
             clearInterval(this.marginTimer);
 
-        if (!this.hasFrameless)
+        this.hasMargin = true;
+
+        if (!this.hasFrameless && !this.forceFocus)
             this.executeDwm(PARAMS.MARGIN, 0);
 
         else
             this.marginTimer = setInterval(() => {
                 try {
-                    this.executeDwm(PARAMS.MARGIN, 0);
+                    if (this.hasFrameless)
+                        this.executeDwm(PARAMS.MARGIN, 0);
+
+                    if (this.forceFocus)
+                        this.executeDwm(PARAMS.FRAME, 5);
                 } catch (e) {
                     clearInterval(this.marginTimer);
                     this.marginTimer = null;
                 }
             }, 1);
+    }
+
+    /**
+     * Focus on the window all the time so as not to lose the mica effect (decrease performance)
+     * @param {Boolean} enable 
+     */
+    alwaysFocused(enable) {
+        this.forceFocus = enable;
+
+        if(this.hasMargin)
+            this.enableMargin();
     }
 
     /**

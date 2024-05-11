@@ -137,6 +137,10 @@ namespace micaElectron
 
             else if (value == DISABLE_CAPTION)
               enableCaption(hwnd);
+
+            else if (value == FOCUS_WINDOW)
+              SetFocus(hwnd);
+
             break;
 
           case MARGIN_TYPE:

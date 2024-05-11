@@ -13,6 +13,7 @@
 #define INTERCEPT_MSG 2
 #define ENABLE_CAPTION 3
 #define DISABLE_CAPTION 4
+#define FOCUS_WINDOW 5
 
 #define MARGIN_TYPE 10
 
