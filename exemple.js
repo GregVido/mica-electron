@@ -3,6 +3,7 @@ const { PARAMS, VALUE, MicaBrowserWindow, IS_WINDOWS_11, WIN10 } = require('./ma
 const path = require('path');
 
 app.on('ready', () => {
+
     const win = new MicaBrowserWindow({
         width: 800,
         height: 600,

@@ -203,6 +203,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
         super(...args);
 
+        
         this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
 
 
@@ -213,6 +214,7 @@ class BrowserWindow extends electron.BrowserWindow {
         }
 
         let frameRemoved = true;
+
 
         let onWindowShow = () => {
             applyEffect();
