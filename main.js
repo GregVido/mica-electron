@@ -206,7 +206,6 @@ class BrowserWindow extends electron.BrowserWindow {
 
         this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
 
-
         let applyEffect = () => {
             if (args.length > 0 && this.useDWM) {
                 this.executeDwm(this.effect, this.theme);
@@ -226,10 +225,10 @@ class BrowserWindow extends electron.BrowserWindow {
                     this.hide();
 
                     if (IS_ELECTRON_RECENT_VERSION) {
-                        if (WINDOWS_11)
+                        if (WINDOWS_11) {
                             this.interceptMessage();
-                        
-                        this.applyStyle();
+                            this.applyStyle();
+                        }
 
                         if (this.hasFrameless)
                             this.removeCaption();
