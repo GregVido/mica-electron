@@ -31,9 +31,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
     case WM_SIZE:
-
+/*
       if (wParam == SIZE_MAXIMIZED)
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);*/
 
       return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
 

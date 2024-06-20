@@ -29,6 +29,13 @@ app.on('ready', () => {
 
     win.webContents.once('dom-ready', () => {
         win.show();
+
+        setTimeout(() => {
+            console.log('ok')
+            win.hide();
+            win.executeDwm(PARAMS.FRAME, 10);
+            win.show();
+        }, 2000);
     });
 
     // Change theme

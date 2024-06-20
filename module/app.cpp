@@ -141,6 +141,11 @@ namespace micaElectron
             else if (value == FOCUS_WINDOW)
               SetFocus(hwnd);
 
+            else if (value == 10) {
+              SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+              SetWindowPos(hwnd, NULL, 0, 0, 1920, 1080, 0x0020);
+            }
+
             break;
 
           case MARGIN_TYPE:

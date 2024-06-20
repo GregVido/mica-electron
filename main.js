@@ -203,7 +203,7 @@ class BrowserWindow extends electron.BrowserWindow {
 
         super(...args);
 
-        
+
         this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
 
 
@@ -226,7 +226,9 @@ class BrowserWindow extends electron.BrowserWindow {
                     this.hide();
 
                     if (IS_ELECTRON_RECENT_VERSION) {
-                        this.interceptMessage();
+                        if (IS_WINDOWS_11)
+                            this.interceptMessage();
+                        
                         this.applyStyle();
 
                         if (this.hasFrameless)
@@ -322,7 +324,7 @@ class BrowserWindow extends electron.BrowserWindow {
     alwaysFocused(enable) {
         this.forceFocus = enable;
 
-        if(this.hasMargin)
+        if (this.hasMargin)
             this.enableMargin();
     }
 
