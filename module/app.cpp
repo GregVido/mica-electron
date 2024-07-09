@@ -37,10 +37,7 @@ namespace micaElectron
     napi_value *argv = new napi_value[argc];
     napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
 
-    if (!isWin11())
-      napi_throw_error(env, nullptr, "Mica-Electron work only on Windows 11.");
-
-    else if (argc < 1)
+    if (argc < 1)
       napi_throw_error(env, nullptr, "HWND argument missing.");
 
     else if (argc < 2)
@@ -87,77 +84,96 @@ namespace micaElectron
         int params = (int)params32;
         int value = (int)value32;
 
-        enableDWM();
-
-        if (params <= MICA_EFFECT)
+        if (params == WINDOW_EDIT)
         {
-          setAppTheme(value, hwnd);
-          bool success = applyMicaEffect(params, hwnd);
-
-          if (!success)
+          switch (value)
           {
-            napi_throw_error(env, nullptr, "You use old version of windows 11, you have don't have ACRYLIC and MICA_TABBED.");
-            return nullptr;
+            case RESET_BORDER:
+              resetBorderApp(hwnd);
+              break;
+
+            case ENABLE_MAXIMIZE:
+              enableMaximizeBox(hwnd);
+              break;
+
+            case INTERCEPT_MSG:
+              interceptMessage(hwnd);
+              break;
+
+            case ENABLE_CAPTION:
+              disableCaption(hwnd);
+              break;
+
+            case DISABLE_CAPTION:
+              enableCaption(hwnd);
+              break;
+
+            case FOCUS_WINDOW:
+              SetFocus(hwnd);
+              break;
+
+            case 10:
+              SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+              SetWindowPos(hwnd, NULL, 0, 0, 1920, 1080, 0x0020);
+              break;
+
+            default:
+              break;
           }
         }
+
+        else if (!isWin11())
+          napi_throw_error(env, nullptr, "Mica-Electron work only on Windows 11.");
 
         else
         {
-          switch (params)
+
+          enableDWM();
+
+          if (params <= MICA_EFFECT)
           {
+            setAppTheme(value, hwnd);
+            bool success = applyMicaEffect(params, hwnd);
 
-          case CORNER_TYPE:
-            setCorner(value, hwnd);
-            break;
-
-          case BORDER_COLOR:
-            setBorderColor(value, hwnd);
-            break;
-
-          case CAPTION_COLOR:
-            setCaptionColor(value, hwnd);
-            break;
-
-          case TEXT_COLOR:
-            setTextColor(value, hwnd);
-            break;
-
-          case WINDOW_EDIT:
-            if (value == RESET_BORDER)
-              resetBorderApp(hwnd);
-
-            else if (value == ENABLE_MAXIMIZE)
-              enableMaximizeBox(hwnd);
-
-            else if (value == INTERCEPT_MSG)
-              interceptMessage(hwnd);
-
-            else if (value == ENABLE_CAPTION)
-              disableCaption(hwnd);
-
-            else if (value == DISABLE_CAPTION)
-              enableCaption(hwnd);
-
-            else if (value == FOCUS_WINDOW)
-              SetFocus(hwnd);
-
-            else if (value == 10) {
-              SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-              SetWindowPos(hwnd, NULL, 0, 0, 1920, 1080, 0x0020);
+            if (!success)
+            {
+              napi_throw_error(env, nullptr, "You use old version of windows 11, you have don't have ACRYLIC and MICA_TABBED.");
+              return nullptr;
             }
-
-            break;
-
-          case MARGIN_TYPE:
-            setMargin(value, hwnd);
-            break;
-
-          default:
-            break;
           }
-        }
 
-        disableDWM();
+          else
+          {
+            switch (params)
+            {
+
+            case CORNER_TYPE:
+              setCorner(value, hwnd);
+              break;
+
+            case BORDER_COLOR:
+              setBorderColor(value, hwnd);
+              break;
+
+            case CAPTION_COLOR:
+              setCaptionColor(value, hwnd);
+              break;
+
+            case TEXT_COLOR:
+              setTextColor(value, hwnd);
+              break;
+
+            case MARGIN_TYPE:
+              setMargin(value, hwnd);
+              break;
+
+            default:
+              break;
+            }
+          }
+
+          disableDWM();
+        }
       }
     }
 
