@@ -359,7 +359,8 @@ class BrowserWindow extends electron.BrowserWindow {
      */
     setDarkTheme() {
         electron.nativeTheme.themeSource = 'dark';
-        this.executeDwm(this.effect, VALUE.THEME.DARK);
+        if (WINDOWS_11)
+            this.executeDwm(this.effect, VALUE.THEME.DARK);
     }
 
     /**
@@ -367,7 +368,8 @@ class BrowserWindow extends electron.BrowserWindow {
      */
     setLightTheme() {
         electron.nativeTheme.themeSource = 'light';
-        this.executeDwm(this.effect, VALUE.THEME.LIGHT);
+        if (WINDOWS_11)
+            this.executeDwm(this.effect, VALUE.THEME.LIGHT);
     }
 
     /**
@@ -375,7 +377,8 @@ class BrowserWindow extends electron.BrowserWindow {
     */
     setAutoTheme() {
         electron.nativeTheme.themeSource = 'system';
-        this.executeDwm(this.effect, VALUE.THEME.AUTO);
+        if (WINDOWS_11)
+            this.executeDwm(this.effect, VALUE.THEME.AUTO);
     }
 
     /**
