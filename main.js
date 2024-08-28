@@ -225,10 +225,8 @@ class BrowserWindow extends electron.BrowserWindow {
                     this.hide();
 
                     if (IS_ELECTRON_RECENT_VERSION) {
-                        if (WINDOWS_11) {
-                            this.interceptMessage();
-                            this.applyStyle();
-                        }
+                        this.interceptMessage();
+                        this.applyStyle();
 
                         if (this.hasFrameless)
                             this.removeCaption();
