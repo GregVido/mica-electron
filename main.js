@@ -19,7 +19,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
-const IS_ELECTRON_RECENT_VERSION = process.versions.electron >= '27.0.0';
+const IS_ELECTRON_RECENT_VERSION = process.versions.electron >= '27.0.0' && process.versions.electron <= '40.0.0';
 
 const filepath = path.join(__dirname, 'src', '/micaElectron_' + process.arch);
 

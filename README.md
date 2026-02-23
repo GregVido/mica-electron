@@ -19,6 +19,14 @@ This is created by <a href="https://www.youtube.com/gregvido">GregVido</a>.<br>
   </div> 
 </details><br> 
 
+## ☕ Support the project
+
+If you like **Mica Electron** and want to support its development, you can buy me a coffee ❤️
+
+👉 https://www.buymeacoffee.com/gregvido
+
+
+
 ## Quickstart
 ```bash
 $ npm install mica-electron
