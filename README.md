@@ -148,33 +148,6 @@ win.setCustomEffect(WIN10.ACRYLIC, '#34ebc0', 0.4); // Acrylic
 
 <br>
 
-
-## Compatibility and troubleshooting
-
-- On Windows 11 22H2 (build 22621) or later with Electron 28+, Mica uses Electron's native `setBackgroundMaterial` API. It does not force a transparent window or replace Electron's frame handling. Earlier versions retain the native-addon fallback.
-- On Windows 10, use `setAcrylic()`, `setBlur()` or `setTransparent()`. Windows 11-only effects and decoration methods are ignored there. Theme methods remain available.
-- On Linux/macOS, the class preserves normal `BrowserWindow` options and Windows effects do nothing.
-- Pass sizes and positions in Electron's device-independent pixels (DIP). Do not multiply `screen.getPrimaryDisplay().workAreaSize` by `scaleFactor`.
-- `webPreferences`, including `experimentalFeatures`, are forwarded unchanged. `backgroundMaterial` takes a string (`'mica'`, `'acrylic'`, `'tabbed'`, `'auto'`, `'none'`), not `true`.
-- CSS `backdrop-filter` filters content behind an element inside the page. It does not blur the desktop through the operating system's Mica surface. Use a transparent page background to reveal the native material; an opaque `html`/`body` background hides it.
-- `alwaysFocused(true)` keeps the decoration active without stealing keyboard focus. It still uses a timer; leave it disabled unless needed. Theme setters also change Electron's app-wide `nativeTheme.themeSource`.
-- Windows 10 acrylic temporarily uses blur while a window is being moved/resized, then restores the selected effect and tint.
-
-See [the issue verification notes](docs/issue-verification.md) for scope and remaining platform checks.
-
-## Run the example and tests
-
-From this repository (Node.js 18+ for the test runner):
-
-```bash
-npm ci
-npm start
-npm test
-npm run test:electron
-```
-
-The Electron smoke test opens and closes test windows. It checks options, DIP dimensions, renderer painting after minimize/restore, and native cleanup. The example is `exemple.js`; do not replace the library's `main.js` or `package.json` to run it.
-
 ## Source Install / Manual Compilation
 To compile from source it's easiest to use
 [`node-gyp`](https://github.com/TooTallNate/node-gyp):
