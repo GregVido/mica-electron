@@ -46,7 +46,8 @@ electron.app.on('ready', () => {
     });
 
     win.setDarkTheme();
-    win.setMicaEffect();
+    if (IS_WINDOWS_11) win.setMicaEffect();
+    else if (process.platform === 'win32') win.setAcrylic();
 
     // win.alwaysFocused(true); // -> allows you to keep the mica effects even if the window is no focus (decrease performance)
 
@@ -148,6 +149,32 @@ win.setCustomEffect(WIN10.ACRYLIC, '#34ebc0', 0.4); // Acrylic
 <br>
 
 
+## Compatibility and troubleshooting
+
+- On Windows 11 22H2 (build 22621) or later with Electron 28+, Mica uses Electron's native `setBackgroundMaterial` API. It does not force a transparent window or replace Electron's frame handling. Earlier versions retain the native-addon fallback.
+- On Windows 10, use `setAcrylic()`, `setBlur()` or `setTransparent()`. Windows 11-only effects and decoration methods are ignored there. Theme methods remain available.
+- On Linux/macOS, the class preserves normal `BrowserWindow` options and Windows effects do nothing.
+- Pass sizes and positions in Electron's device-independent pixels (DIP). Do not multiply `screen.getPrimaryDisplay().workAreaSize` by `scaleFactor`.
+- `webPreferences`, including `experimentalFeatures`, are forwarded unchanged. `backgroundMaterial` takes a string (`'mica'`, `'acrylic'`, `'tabbed'`, `'auto'`, `'none'`), not `true`.
+- CSS `backdrop-filter` filters content behind an element inside the page. It does not blur the desktop through the operating system's Mica surface. Use a transparent page background to reveal the native material; an opaque `html`/`body` background hides it.
+- `alwaysFocused(true)` keeps the decoration active without stealing keyboard focus. It still uses a timer; leave it disabled unless needed. Theme setters also change Electron's app-wide `nativeTheme.themeSource`.
+- Windows 10 acrylic temporarily uses blur while a window is being moved/resized, then restores the selected effect and tint.
+
+See [the issue verification notes](docs/issue-verification.md) for scope and remaining platform checks.
+
+## Run the example and tests
+
+From this repository (Node.js 18+ for the test runner):
+
+```bash
+npm ci
+npm start
+npm test
+npm run test:electron
+```
+
+The Electron smoke test opens and closes test windows. It checks options, DIP dimensions, renderer painting after minimize/restore, and native cleanup. The example is `exemple.js`; do not replace the library's `main.js` or `package.json` to run it.
+
 ## Source Install / Manual Compilation
 To compile from source it's easiest to use
 [`node-gyp`](https://github.com/TooTallNate/node-gyp):
@@ -156,12 +183,14 @@ To compile from source it's easiest to use
 $ npm install -g node-gyp
 ```
 
-Now you can compile `mica-electron`:
+Install Python and Visual Studio C++ Build Tools with a Windows SDK. Add the ARM64 C++ build tools if building that architecture. Then compile `mica-electron`:
 
 ``` bash
 $ cd .\node_modules\mica-electron\
 $ ./build.bat
 ```
+
+The default builds x64 and ia32. Use `build.bat --include-arm64` for all three, or `build.bat --arch=arm64` (also `x64`/`ia32`) for one architecture. `npm run build:native -- --include-arm64` is equivalent. The script returns a nonzero exit code on failure, keeps existing shipped binaries until compilation succeeds, and preserves `data`.
 ## Objects details
 <details>
   <summary>PARAMS Object</summary>
@@ -239,24 +268,21 @@ const WIN10 = {
 ## FAQ
 <details>
   <summary>Error: '...\micaElectron.node' was compiled against a different Node.js version using ...</summary>
-  If you are an error of nodejs version, use electron-packager to rebuild the project with the good version.
+  The bundled addon uses Node-API. First verify that the installed package and binary match your Electron process architecture (`process.arch`). If you need to compile it locally, use the source build script and prerequisites above:
 
   ```bash
-  $ npm install electron
-  $ npm install electron-rebuild
-  $ .\node_modules\.bin\electron-rebuild
+  $ cd .\node_modules\mica-electron\
+  $ .\build.bat --arch=x64
   ```
 </details>
 <details>
   <summary>Build for 32 bits ?</summary>
 
-  If you want use `mica-electron` with 32 bits electron app, rebuild C++ script
+  The package includes an ia32 binary. To rebuild it for a 32-bit Electron process:
 
 ``` bash
 $ cd .\node_modules\mica-electron\
-$ node-gyp rebuild --arch=ia32
-$ cd ..\..\
-$ .\node_modules\.bin\electron-rebuild --arch=ia32
+$ .\build.bat --arch=ia32
 ```
 </details>
 <br>

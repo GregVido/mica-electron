@@ -2,3 +2,7 @@ node_modules
 .vscode
 bin
 build/**
+.native-build/
+.npm-cache/
+.npm-cache
+docs

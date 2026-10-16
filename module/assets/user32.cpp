@@ -1,5 +1,5 @@
 /*
-Copyright 2024 GregVido
+Copyright 2026 GregVido
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,13 +25,15 @@ bool user32Enabled = false;
 void enableUser32()
 {
     user32 = LoadLibrary(TEXT("user32.dll"));
-    SetWindowCompositionAttributeUser32 = (pSetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute");
-    user32Enabled = true;
+    SetWindowCompositionAttributeUser32 = user32 ? (pSetWindowCompositionAttribute)GetProcAddress(user32, "SetWindowCompositionAttribute") : nullptr;
+    user32Enabled = SetWindowCompositionAttributeUser32 != nullptr;
 }
 
 void disableUser32()
 {
-    FreeLibrary(user32);
+    if (user32) FreeLibrary(user32);
+    user32 = nullptr;
+    SetWindowCompositionAttributeUser32 = nullptr;
     user32Enabled = false;
 }
 
@@ -53,8 +55,8 @@ void enableMaximizeBox(HWND hwnd)
 
 void interceptMessage(HWND hwnd)
 {
-    originalWndProc = (WNDPROC)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
-    SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
+    // Idempotent and per-window; no shared WNDPROC across BrowserWindows.
+    SetWindowSubclass(hwnd, WindowProc, 1, 0);
 }
 
 void disableCaption(HWND hwnd)

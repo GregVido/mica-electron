@@ -1,11 +1,14 @@
 {
   "name": "mica-electron",
-  "version": "1.5.17",
+  "version": "1.5.18",
   "description": "Tool to add mica effect of windows 11 in electron app",
   "main": "main.js",
   "types": "./types/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test test/*.test.js",
+    "start": "electron exemple.js",
+    "build:native": "node scripts/build.js",
+    "test:electron": "electron test/electron-smoke.js"
   },
   "repository": {
     "type": "git",

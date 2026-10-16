@@ -1,5 +1,5 @@
 /*
-Copyright 2024 GregVido
+Copyright 2026 GregVido
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -31,10 +31,8 @@ namespace micaElectron
 
   napi_value executeDwm(napi_env env, napi_callback_info args)
   {
-    size_t argc;
-    napi_get_cb_info(env, args, &argc, nullptr, nullptr, nullptr);
-
-    napi_value *argv = new napi_value[argc];
+    size_t argc = 3;
+    napi_value argv[3];
     napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
 
     if (argc < 1)
@@ -101,15 +99,15 @@ namespace micaElectron
               break;
 
             case ENABLE_CAPTION:
-              disableCaption(hwnd);
-              break;
-
-            case DISABLE_CAPTION:
               enableCaption(hwnd);
               break;
 
+            case DISABLE_CAPTION:
+              disableCaption(hwnd);
+              break;
+
             case FOCUS_WINDOW:
-              SetFocus(hwnd);
+              SendMessage(hwnd, WM_NCACTIVATE, TRUE, 0);
               break;
 
             case 10:
@@ -137,6 +135,7 @@ namespace micaElectron
 
             if (!success)
             {
+              disableDWM();
               napi_throw_error(env, nullptr, "You use old version of windows 11, you have don't have ACRYLIC and MICA_TABBED.");
               return nullptr;
             }
@@ -182,10 +181,8 @@ namespace micaElectron
 
   napi_value executeUser32(napi_env env, napi_callback_info args)
   {
-    size_t argc;
-    napi_get_cb_info(env, args, &argc, nullptr, nullptr, nullptr);
-
-    napi_value *argv = new napi_value[argc];
+    size_t argc = 3;
+    napi_value argv[3];
     napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
 
     if (argc < 1)
@@ -247,10 +244,8 @@ namespace micaElectron
 
   napi_value redraw(napi_env env, napi_callback_info args)
   {
-    size_t argc;
-    napi_get_cb_info(env, args, &argc, nullptr, nullptr, nullptr);
-
-    napi_value *argv = new napi_value[argc];
+    size_t argc = 5;
+    napi_value argv[5];
     napi_get_cb_info(env, args, &argc, argv, nullptr, nullptr);
 
     if (argc < 1)
@@ -324,7 +319,9 @@ namespace micaElectron
         int width = (int)width32;
         int height = (int)height32;
 
-        SetWindowPos(hwnd, 0, x, y, width, height, 0x0020);
+        // Refresh non-client metrics without changing DIP geometry or focus.
+        SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
+          SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
       }
     }
 

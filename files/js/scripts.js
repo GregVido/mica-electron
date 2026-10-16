@@ -11,7 +11,7 @@ function setTheme(theme) {
         document.head.appendChild(darkTheme);
 
     else
-        document.head.removeChild(darkTheme);
+        darkTheme.remove();
 }
 
 function setEffect(effect) {
@@ -31,7 +31,8 @@ function htmlToColor(color) {
 }
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-    document.head[event.matches ? 'appendChild' : 'removeChild'](darkTheme);
+    if (event.matches) document.head.appendChild(darkTheme);
+    else darkTheme.remove();
 });
 
 window.onload = () => {

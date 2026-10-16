@@ -1,5 +1,5 @@
 /*
-Copyright 2024 GregVido
+Copyright 2026 GregVido
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,48 +16,31 @@ limitations under the License.
 
 #include <dwmapi.h>
 
-#include <vector>
-#include <string>
-#include <stdexcept>
+#include <commctrl.h>
+#pragma comment(lib, "comctl32.lib")
 
-WNDPROC originalWndProc;
-
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+                            UINT_PTR subclassId, DWORD_PTR)
 {
-
-  switch (uMsg)
-  {
-    case WM_SYSCOMMAND:
-      return DefWindowProc(hwnd, uMsg, wParam, lParam);
-
-    case WM_SIZE:
-/*
-      if (wParam == SIZE_MAXIMIZED)
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);*/
-
-      return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
-
-    default:
-      return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
-  }
+  if (uMsg == WM_NCDESTROY)
+    RemoveWindowSubclass(hwnd, WindowProc, subclassId);
+  // Keep Electron's own handling of minimize/maximize and renderer resizing.
+  return DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
 DWORD getBuild()
 {
-  DWORD dwVersion = 0;
-  DWORD dwMajorVersion = 0;
-  DWORD dwMinorVersion = 0;
-  DWORD dwBuild = 0;
-
-  dwVersion = GetVersion();
-
-  dwMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
-  dwMinorVersion = (DWORD)(HIBYTE(LOWORD(dwVersion)));
-
-  if (dwVersion < 0x80000000)
-    dwBuild = (DWORD)(HIWORD(dwVersion));
-
-  return dwBuild;
+  // GetVersion depends on the host application's compatibility manifest.
+  static const DWORD build = []() -> DWORD {
+    using RtlGetVersionFn = LONG(WINAPI *)(OSVERSIONINFOW *);
+    HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
+    auto rtlGetVersion = ntdll ? reinterpret_cast<RtlGetVersionFn>(
+      GetProcAddress(ntdll, "RtlGetVersion")) : nullptr;
+    OSVERSIONINFOW version = {};
+    version.dwOSVersionInfoSize = sizeof(version);
+    return rtlGetVersion && rtlGetVersion(&version) == 0 ? version.dwBuildNumber : 0;
+  }();
+  return build;
 }
 
 bool isInsider()
@@ -72,30 +55,17 @@ bool isWin11()
 
 bool is_light_theme()
 {
-  // based on https://stackoverflow.com/questions/51334674/how-to-detect-windows-10-light-dark-mode-in-win32-application
-
-  // The value is expected to be a REG_DWORD, which is a signed 32-bit little-endian
-  auto buffer = std::vector<char>(4);
-  auto cbData = static_cast<DWORD>(buffer.size() * sizeof(char));
+  DWORD lightTheme = 1;
+  DWORD cbData = sizeof(lightTheme);
   auto res = RegGetValueW(
       HKEY_CURRENT_USER,
       L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
       L"AppsUseLightTheme",
       RRF_RT_REG_DWORD, // expected value type
       nullptr,
-      buffer.data(),
+      &lightTheme,
       &cbData);
 
-  if (res != ERROR_SUCCESS)
-  {
-    throw std::runtime_error("Error: error_code=" + std::to_string(res));
-  }
-
-  // convert bytes written to our buffer to an int, assuming little-endian
-  auto i = int(buffer[3] << 24 |
-               buffer[2] << 16 |
-               buffer[1] << 8 |
-               buffer[0]);
-
-  return i == 1;
+  // A missing personalization key must not throw through the N-API boundary.
+  return res != ERROR_SUCCESS || lightTheme != 0;
 }

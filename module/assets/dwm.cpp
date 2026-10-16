@@ -1,5 +1,5 @@
 /*
-Copyright 2024 GregVido
+Copyright 2026 GregVido
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,15 +27,18 @@ bool dwmEnabled = false;
 void enableDWM()
 {
     dwmapi = LoadLibrary(TEXT("dwmapi.dll"));
-    SetWindowAttribute = (pDwmSetWindowAttribute)GetProcAddress(dwmapi, "DwmSetWindowAttribute");
-    ExtendFrameIntoClientArea = (pDwmExtendFrameIntoClientArea)GetProcAddress(dwmapi, "DwmExtendFrameIntoClientArea");
+    SetWindowAttribute = dwmapi ? (pDwmSetWindowAttribute)GetProcAddress(dwmapi, "DwmSetWindowAttribute") : nullptr;
+    ExtendFrameIntoClientArea = dwmapi ? (pDwmExtendFrameIntoClientArea)GetProcAddress(dwmapi, "DwmExtendFrameIntoClientArea") : nullptr;
 
-    dwmEnabled = true;
+    dwmEnabled = SetWindowAttribute && ExtendFrameIntoClientArea;
 }
 
 void disableDWM()
 {
-    FreeLibrary(dwmapi);
+    if (dwmapi) FreeLibrary(dwmapi);
+    dwmapi = nullptr;
+    SetWindowAttribute = nullptr;
+    ExtendFrameIntoClientArea = nullptr;
     dwmEnabled = false;
 }
 
@@ -68,10 +71,7 @@ bool applyMicaEffect(int type, HWND hwnd)
         {
             int micaEnable = 0x00;
 
-            if (type == 1)
-                micaEnable = 0x02;
-
-            else if (type == 2)
+            if (type == 2)
                 micaEnable = 0x01;
 
             SetWindowAttribute(hwnd, DWMWA_MICA_EFFECT, &micaEnable, sizeof(int));

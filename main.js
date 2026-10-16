@@ -1,5 +1,5 @@
 /*
-Copyright 2024 GregVido
+Copyright 2026 GregVido
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,7 +19,12 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
-const IS_ELECTRON_RECENT_VERSION = process.versions.electron >= '27.0.0' && process.versions.electron <= '40.0.0';
+const ELECTRON_MAJOR = Number.parseInt(process.versions.electron, 10);
+const IS_WINDOWS = process.platform === 'win32';
+const WINDOWS_BUILD = IS_WINDOWS ? Number(os.release().split('.')[2]) : 0;
+const HAS_NATIVE_MATERIAL = WINDOWS_BUILD >= 22621 && ELECTRON_MAJOR >= 28 &&
+    typeof electron.BrowserWindow.prototype.setBackgroundMaterial === 'function';
+const NEEDS_TRANSPARENT_WORKAROUND = IS_WINDOWS && ELECTRON_MAJOR >= 27 && !HAS_NATIVE_MATERIAL;
 
 const filepath = path.join(__dirname, 'src', '/micaElectron_' + process.arch);
 
@@ -45,17 +50,15 @@ else {
     console.log('Mica-Electron: Disabled');
 }
 
-electron.app.commandLine.appendSwitch("enable-transparent-visuals");
+if (NEEDS_TRANSPARENT_WORKAROUND)
+    electron.app.commandLine.appendSwitch('enable-transparent-visuals');
 
 /**
  * Detect if OS is windows 11
  * @returns {Boolean} True if windows 11
  */
 function isWin11() {
-    const version = os.release().split('.');
-    if (version.length == 3)
-        return version[2] >= '22000';
-    return false;
+    return IS_WINDOWS && WINDOWS_BUILD >= 22000;
 }
 
 const WINDOWS_11 = isWin11();
@@ -65,12 +68,10 @@ const WINDOWS_11 = isWin11();
  * @param  {BrowserWindow} window Target to remove frame
  */
 function redrawFrame(window) {
-    if (redraw) {
-        const HWND = window.getNativeWindowHandle()["readInt32LE"]();
-
-        const bounds = window.getBounds();
-
-        // executeDwm(HWND, PARAMS.FRAME, VALUE.FALSE);
+    if (redraw && !window.isDestroyed()) {
+        const HWND = window.getNativeWindowHandle().readUInt32LE();
+        // Electron uses DIP; the Win32 API expects physical screen coordinates.
+        const bounds = electron.screen.dipToScreenRect(window, window.getBounds());
         redraw(HWND, bounds.x, bounds.y, bounds.width, bounds.height);
     }
 }
@@ -129,6 +130,9 @@ const WIN10 = {
  * @return {Number}     windows color (int, 24 bits)
  */
 let getColorByString = (str) => {
+    if (typeof str !== 'string' || !/^(#[\da-f]{3}|#[\da-f]{6}|[\da-f]{8}|rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\))$/i.test(str))
+        throw new TypeError('Expected #RGB, #RRGGBB, rgb(r, g, b), or an Electron accent color.');
+    str = str.toLowerCase();
     if (str.startsWith('#')) {
         const hexs = str.slice(1);
         if (hexs.length == 3) {
@@ -152,6 +156,9 @@ let getColorByString = (str) => {
         const r = parseInt(data[0]);
         const g = parseInt(data[1]);
         const b = parseInt(data[2]);
+
+        if ([r, g, b].some(channel => channel > 255))
+            throw new RangeError('RGB channels must be between 0 and 255.');
 
         return VALUE.COLOR.FROM_RGB(r, g, b);
     }
@@ -185,71 +192,84 @@ class BrowserWindow extends electron.BrowserWindow {
 
     /**
      * Create electron BrowserWindow with mica effect features
-     * @param  {...Object} args 
+     * @param {Electron.BrowserWindowConstructorOptions} options
      */
-    constructor(...args) {
-        if (args.length > 0) {
-            args[0].transparent = false;
-            args[0].backgroundColor = '#00ffffff';
-        } else
-            args.push({
-                backgroundColor: '#00ffffff'
-            });
+    constructor(options = {}) {
+        const windowOptions = { ...options };
+        if (IS_WINDOWS) {
+            windowOptions.backgroundColor ??= '#00ffffff';
+            if (NEEDS_TRANSPARENT_WORKAROUND)
+                windowOptions.transparent = true;
+        }
+        super(windowOptions);
 
+        this.hasFrameless = options.frame === false || options.titleBarStyle === 'hidden';
+        this._legacyFrameInitialized = false;
+        this._user32Effect = null;
+        this._inSizeMove = false;
+        if (HAS_NATIVE_MATERIAL && typeof options.backgroundMaterial === 'string') {
+            const effect = ['auto', 'none', 'mica', 'acrylic', 'tabbed'].indexOf(options.backgroundMaterial);
+            if (effect !== -1) {
+                this.effect = effect;
+                this.useDWM = effect !== PARAMS.BACKGROUND.NONE;
+                this.hasMargin = this.useDWM;
+            }
+        }
 
-        if (IS_ELECTRON_RECENT_VERSION)
-            args[0].transparent = true;
-
-
-        super(...args);
-
-
-        this.hasFrameless = args[0].frame === false || args[0].titleBarStyle == 'hidden';
-
-        let applyEffect = () => {
-            if (args.length > 0 && this.useDWM) {
+        const applyEffect = () => {
+            if (this.isDestroyed() || this.isMinimized()) return;
+            if (this.useDWM) {
                 this.executeDwm(this.effect, this.theme);
             }
-        }
+            if (this.hasMargin) this.enableMargin();
+        };
 
-        let frameRemoved = true;
-
-
-        let onWindowShow = () => {
-            applyEffect();
-
-            if (frameRemoved) {
-                frameRemoved = false;
-
-                setTimeout(() => {
-                    this.hide();
-
-                    if (IS_ELECTRON_RECENT_VERSION) {
-                        this.interceptMessage();
-                        this.applyStyle();
-
-                        if (this.hasFrameless)
-                            this.removeCaption();
-                    }
-                    redrawFrame(this);
-                    this.show();
-                }, 60);
+        const onWindowShow = () => {
+            if (this.isDestroyed()) return;
+            if (NEEDS_TRANSPARENT_WORKAROUND && executeDwm && !this._legacyFrameInitialized) {
+                this._legacyFrameInitialized = true;
+                this.interceptMessage();
+                if (options.resizable !== false && options.maximizable !== false)
+                    this.applyStyle();
+                if (this.hasFrameless) this.removeCaption();
+                redrawFrame(this);
             }
-        }
+            applyEffect();
+        };
 
         this.on('show', onWindowShow);
         this.on('restore', onWindowShow);
 
-        this.on('close', () => {
-            if (this.marginTimer)
-                clearInterval(this.marginTimer);
+        this.on('maximize', applyEffect);
+        this.on('unmaximize', applyEffect);
+        this.on('closed', () => {
+            clearInterval(this.marginTimer);
+            clearTimeout(this._resizeTimer);
+            this.marginTimer = null;
+            this._resizeTimer = null;
         });
 
         this.on('resize', () => {
-            if (this.hasFrameless)
-                setTimeout(applyEffect, 60); // refresh effect
+            if (this.hasFrameless && !HAS_NATIVE_MATERIAL) {
+                clearTimeout(this._resizeTimer);
+                this._resizeTimer = setTimeout(applyEffect, 60);
+            }
         });
 
+        // Acrylic is expensive during the Win32 move/resize modal loop (#28).
+        if (IS_WINDOWS && !WINDOWS_11 && executeUser32) {
+            this.hookWindowMessage(0x0231, () => { // WM_ENTERSIZEMOVE
+                this._inSizeMove = true;
+                if (this._user32Effect?.params === WIN10.ACRYLIC)
+                    this._applyUser32(WIN10.BLURBEHIND, this._user32Effect.value);
+            });
+            this.hookWindowMessage(0x0232, () => { // WM_EXITSIZEMOVE
+                this._inSizeMove = false;
+                if (this._user32Effect)
+                    this._applyUser32(this._user32Effect.params, this._user32Effect.value);
+            });
+        }
+        if (this.isVisible()) onWindowShow();
     }
 
     /**
@@ -293,16 +313,18 @@ class BrowserWindow extends electron.BrowserWindow {
     enableMargin() {
         if (this.marginTimer)
             clearInterval(this.marginTimer);
-
+        this.marginTimer = null;
+        if (!WINDOWS_11 || this.isDestroyed()) return;
         this.hasMargin = true;
-
-        if (!this.hasFrameless && !this.forceFocus)
+        if (HAS_NATIVE_MATERIAL && !this.forceFocus) return;
+        if (!executeDwm) return;
+        if (!HAS_NATIVE_MATERIAL)
             this.executeDwm(PARAMS.MARGIN, 0);
-
-        else
+        if ((!HAS_NATIVE_MATERIAL && this.hasFrameless) || this.forceFocus)
             this.marginTimer = setInterval(() => {
+                if (this.isDestroyed() || !this.isVisible() || this.isMinimized()) return;
                 try {
-                    if (this.hasFrameless)
+                    if (!HAS_NATIVE_MATERIAL && this.hasFrameless)
                         this.executeDwm(PARAMS.MARGIN, 0);
 
                     if (this.forceFocus)
@@ -311,7 +333,7 @@ class BrowserWindow extends electron.BrowserWindow {
                     clearInterval(this.marginTimer);
                     this.marginTimer = null;
                 }
-            }, 1);
+            }, 16);
     }
 
     /**
@@ -329,6 +351,7 @@ class BrowserWindow extends electron.BrowserWindow {
      * Apply MicaEffect (only windows 11)
      */
     setMicaEffect() {
+        if (!WINDOWS_11) return;
         this.disableUser32();
         this.enableMargin();
         this.executeDwm(PARAMS.BACKGROUND.MICA, this.theme);
@@ -338,6 +361,7 @@ class BrowserWindow extends electron.BrowserWindow {
      * Apply MicaTabbed Effect (only windows 11)
      */
     setMicaTabbedEffect() {
+        if (!WINDOWS_11) return;
         this.disableUser32();
         this.enableMargin();
         this.executeDwm(PARAMS.BACKGROUND.TABBED_MICA, this.theme);
@@ -347,6 +371,7 @@ class BrowserWindow extends electron.BrowserWindow {
      * Apply Acrylic Effect (only windows 11)
      */
     setMicaAcrylicEffect() {
+        if (!WINDOWS_11) return;
         this.disableUser32();
         this.enableMargin();
         this.executeDwm(PARAMS.BACKGROUND.ACRYLIC, this.theme);
@@ -356,6 +381,7 @@ class BrowserWindow extends electron.BrowserWindow {
      * Apply dark theme to the electron app
      */
     setDarkTheme() {
+        this.theme = VALUE.THEME.DARK;
         electron.nativeTheme.themeSource = 'dark';
         if (WINDOWS_11)
             this.executeDwm(this.effect, VALUE.THEME.DARK);
@@ -365,6 +391,7 @@ class BrowserWindow extends electron.BrowserWindow {
      * Apply light theme to the electron app
      */
     setLightTheme() {
+        this.theme = VALUE.THEME.LIGHT;
         electron.nativeTheme.themeSource = 'light';
         if (WINDOWS_11)
             this.executeDwm(this.effect, VALUE.THEME.LIGHT);
@@ -374,6 +401,7 @@ class BrowserWindow extends electron.BrowserWindow {
     * Apply auto detection theme to the electron app
     */
     setAutoTheme() {
+        this.theme = VALUE.THEME.AUTO;
         electron.nativeTheme.themeSource = 'system';
         if (WINDOWS_11)
             this.executeDwm(this.effect, VALUE.THEME.AUTO);
@@ -473,11 +501,15 @@ class BrowserWindow extends electron.BrowserWindow {
      * @param {Number} a Alpha intensity (0 < a < 1)
      */
     setCustomEffect(nAccentState, color, a) {
+        if (!Object.values(WIN10).includes(nAccentState))
+            throw new RangeError('Unknown Windows 10 effect.');
+        if (!Number.isFinite(a))
+            throw new TypeError('Alpha must be a finite number.');
+        const colorToInt = getColorByString(color);
         if (WINDOWS_11)
             this.disableDWM();
 
         a = Math.min(Math.max(Math.round(a * 255), 0), 255);
-        const colorToInt = getColorByString(color);
         this.executeUser32(nAccentState, (a << 24) + colorToInt);
     }
 
@@ -506,8 +538,19 @@ class BrowserWindow extends electron.BrowserWindow {
      * @param  {Number} value New value for the params
      */
     executeDwm(params, value) {
+        if (!IS_WINDOWS || this.isDestroyed()) return;
+        if (!WINDOWS_11 && params !== PARAMS.FRAME) return;
+        if (params >= 0 && params <= 4 && HAS_NATIVE_MATERIAL) {
+            this.setBackgroundMaterial(['auto', 'none', 'mica', 'acrylic', 'tabbed'][params]);
+            // Preserve the low-level API's explicit theme argument as well.
+            if (executeDwm)
+                executeDwm(this.getNativeWindowHandle().readUInt32LE(), params, value);
+            this.effect = params;
+            this.theme = value;
+            return;
+        }
         if (executeDwm) {
-            const HWND = this.getNativeWindowHandle()["readInt32LE"]();
+            const HWND = this.getNativeWindowHandle().readUInt32LE();
             executeDwm(HWND, params, value);
 
             if (params >= 0 && params <= 4) {
@@ -523,8 +566,13 @@ class BrowserWindow extends electron.BrowserWindow {
      * @param  {Number} value New value for the params
      */
     executeUser32(params, value) {
-        if (executeUser32) {
-            const HWND = this.getNativeWindowHandle()["readInt32LE"]();
+        this._user32Effect = { params, value };
+        this._applyUser32(this._inSizeMove && params === WIN10.ACRYLIC ? WIN10.BLURBEHIND : params, value);
+    }
+
+    _applyUser32(params, value) {
+        if (executeUser32 && !this.isDestroyed()) {
+            const HWND = this.getNativeWindowHandle().readUInt32LE();
             executeUser32(HWND, params, value);
         }
     }
